@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Renatus Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    crossorigin=""
+  />
+  <style>
+    html, body {
+      margin: 0;
+      height: 100vh;
+      background: #000;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #map-container {
+      position: relative;
+      width: 100vh;
+      height: 100vh;
+      max-width: 100vh;
+      max-height: 100vh;
+      overflow: hidden;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      background: transparent;
+    }
+
+    #background-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('tv-background.png') center center no-repeat;
+      background-size: cover;
+      z-index: 0;
+      pointer-events: none;
+    }
+    #tv-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 10;
+      background: url('tv-frame.png') center center no-repeat;
+      background-size: cover;
+    }
+
+    #coord-input {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 20;
+      background: rgba(0,0,0,0.6);
+      padding: 10px;
+      color: #fff;
+      font-family: sans-serif;
+      border-radius: 6px;
+    }
+
+    .pulse-marker {
+      width: 20px;
+      height: 20px;
+      background: rgba(255, 0, 0, 0.7);
+      border-radius: 50%;
+      animation: pulse 1.2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.5); opacity: 0.5; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Coordinate Input Box -->
+  <div id="coord-input">
+    <label>Jump to Coord:</label>
+    <input type="number" id="coord-x" placeholder="X" />
+    <input type="number" id="coord-y" placeholder="Y" />
+    <button onclick="gotoCoord()">Go</button>
+    <br>
+    <label><input type="checkbox" id="toggle-water"> Water Overlay</label>
+    <label><input type="checkbox" id="toggle-saltmud"> Salt & Mud Overlay</label>
+    <label><input type="checkbox" id="toggle-road"> Road Overlay</label>
+    <label><input type="checkbox" id="toggle-structure"> Structure Overlay</label>
+    <label><input type="checkbox" id="toggle-sanctuary"> Sanctuary Overlay</label>
+    <label><input type="checkbox" id="toggle-migration"> Migration Overlay</label>
+    <label><input type="checkbox" id="toggle-patrol"> Patrol Overlay</label>
+  </div>
+
+  <!-- Map Container with Overlays -->
+  <div id="map-container">
+    <div id="background-overlay"></div>
+    <div id="map"></div>
+    <div id="tv-overlay"></div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script>
+    const map = L.map('map', {
+      crs: L.CRS.Simple,
+      minZoom: -2,
+      maxZoom: 1,
+      zoomControl: true,
+      maxBounds: [[0, 0], [4096, 4096]],
+      maxBoundsViscosity: 1.0
+    });
+
+    const mapSize = 4096;
+    const imageBounds = [[0, 0], [mapSize, mapSize]];
+
+    // Custom panes for z-index order
+    map.createPane('base'); map.getPane('base').style.zIndex = 200;
+    map.createPane('water'); map.getPane('water').style.zIndex = 300;
+    map.createPane('terrain'); map.getPane('terrain').style.zIndex = 400;
+    map.createPane('road'); map.getPane('road').style.zIndex = 500;
+    map.createPane('saltmud'); map.getPane('saltmud').style.zIndex = 600;
+    map.createPane('structure'); map.getPane('structure').style.zIndex = 700;
+    map.createPane('sanctuary'); map.getPane('sanctuary').style.zIndex = 800;
+    map.createPane('migration'); map.getPane('migration').style.zIndex = 850;
+    map.createPane('patrol'); map.getPane('patrol').style.zIndex = 900;
+
+    // Layers
+    const baseLayer = L.imageOverlay('map-base.png', imageBounds, { pane: 'base' }).addTo(map);
+    const terrainLayer = L.imageOverlay('terrain-line.png', imageBounds, { pane: 'terrain' }).addTo(map);
+
+    // Toggleable layers (start OFF)
+    const waterLayer = L.imageOverlay('water-layer.png', imageBounds, { pane: 'water' });
+    const saltmudLayer = L.imageOverlay('salt-mud-layer.png', imageBounds, { pane: 'saltmud' });
+    const roadLayer = L.imageOverlay('road-layer.png', imageBounds, { pane: 'road' });
+    const structureLayer = L.imageOverlay('structure-layer.png', imageBounds, { pane: 'structure' });
+    const sanctuaryLayer = L.imageOverlay('sanctuary-layer.png', imageBounds, { pane: 'sanctuary' });
+    const migrationLayer = L.imageOverlay('migration-layer.png', imageBounds, { pane: 'migration' });
+    const patrolLayer = L.imageOverlay('patrol-layer.png', imageBounds, { pane: 'patrol' });
+
+    map.fitBounds(imageBounds);
+
+    // Modular toggle system
+    const toggleableLayers = {
+      "toggle-water": waterLayer,
+      "toggle-saltmud": saltmudLayer,
+      "toggle-road": roadLayer,
+      "toggle-structure": structureLayer,
+      "toggle-sanctuary": sanctuaryLayer,
+      "toggle-migration": migrationLayer,
+      "toggle-patrol": patrolLayer,
+    };
+
+    for (const [checkboxId, layer] of Object.entries(toggleableLayers)) {
+      const checkbox = document.getElementById(checkboxId);
+      if (!checkbox) continue;
+      checkbox.addEventListener('change', function () {
+        if (this.checked) {
+          layer.addTo(map);
+        } else {
+          map.removeLayer(layer);
+        }
+      });
+    }
+
+    let markerLayer = null;
+
+    function gotoCoord() {
+      const x = parseFloat(document.getElementById('coord-x').value);
+      const y = parseFloat(document.getElementById('coord-y').value);
+      if (isNaN(x) || isNaN(y)) return;
+
+      const lat = mapSize - y;
+      const lng = x;
+
+      if (markerLayer) map.removeLayer(markerLayer);
+      const divIcon = L.divIcon({ className: 'pulse-marker' });
+      markerLayer = L.marker([lat, lng], { icon: divIcon }).addTo(map);
+      map.setView([lat, lng], map.getZoom());
+    }
+
+    window.addEventListener('load', () => {
+      map.invalidateSize();
+    });
+  </script>
+</body>
+
+</html>
