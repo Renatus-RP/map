@@ -142,9 +142,9 @@
 
     // Toggleable layers (start OFF)
     const waterLayer = L.imageOverlay('water-layer.png', imageBounds, { pane: 'water' });
-    const saltmudLayer = L.imageOverlay('salt-mud-layer.png', imageBounds, { pane: 'saltmud' });
-    const roadLayer = L.imageOverlay('road-layer.png', imageBounds, { pane: 'road' });
-    const structureLayer = L.imageOverlay('structure-layer.png', imageBounds, { pane: 'structure' });
+    const saltmudLayer = L.imageOverlay('salt-mud-layer.png', imageBounds, { pane: 'saltmud', opacity: 0.8 });
+    const roadLayer = L.imageOverlay('road-layer.png', imageBounds, { pane: 'road', opacity: 0.8 });
+    const structureLayer = L.imageOverlay('structure-layer.png', imageBounds, { pane:, opacity: 0.8 });
     const sanctuaryLayer = L.imageOverlay('sanctuary-layer.png', imageBounds, { pane: 'sanctuary' });
     const migrationLayer = L.imageOverlay('migration-layer.png', imageBounds, { pane: 'migration' });
     const patrolLayer = L.imageOverlay('patrol-layer.png', imageBounds, { pane: 'patrol' });
