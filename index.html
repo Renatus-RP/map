@@ -20,13 +20,30 @@
       align-items: center;
     }
 
+    #control-panel-base {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      height: 100vh;
+      transform: translateX(-50%);
+      z-index: -100;
+      pointer-events: none;
+    }
+
     #map-container {
-      position: relative;
+      position: fixed;
+      top: 50%;
+      left: 50%;
       width: 100vh;
       height: 100vh;
+      transform: translate(-50%, -50%);
       max-width: 100vh;
       max-height: 100vh;
       overflow: hidden;
+      opacity: 0;
+      transition: opacity 1s ease-in;
+      display: none;
+      z-index: 5;
     }
 
     #map {
@@ -47,16 +64,18 @@
       z-index: 0;
       pointer-events: none;
     }
+
     #tv-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 100vh;
+      height: 100vh;
+      transform: translate(-50%, -50%);
       pointer-events: none;
       z-index: 10;
       background: url('tv-frame.png') center center no-repeat;
-      background-size: cover;
+      background-size: contain;
     }
 
     #coord-input {
@@ -70,6 +89,35 @@
       font-family: sans-serif;
       border-radius: 6px;
     }
+
+    #overlay-buttons {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 25;
+    }
+
+    .map-toggle-btn {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      pointer-events: auto;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      cursor: pointer;
+    }
+
+    #btn-water      { top: 51.60%; left: 12.46%; }
+    #btn-saltmud    { top: 57.10%; left: 12.50%; }
+    #btn-road       { top: 51.60%; left: 15.25%; }
+    #btn-structure  { top: 51.60%; left: 20.75%; }
+    #btn-sanctuary  { top: 57.10%; left: 20.79%; }
+    #btn-migration  { top: 51.60%; left: 18.00%; }
+    #btn-patrol     { top: 57.10%; left: 18.04%; }
+    #btn-map-toggle { top: 76%; left: 5%; opacity: 0.5; }
 
     .pulse-marker {
       width: 20px;
@@ -87,30 +135,33 @@
   </style>
 </head>
 <body>
-  <!-- Coordinate Input Box -->
+  <img id="control-panel-base" src="control-panel-base.png" alt="" />
+
   <div id="coord-input">
     <label>Jump to Coord:</label>
     <input type="number" id="coord-x" placeholder="X" />
     <input type="number" id="coord-y" placeholder="Y" />
     <button onclick="gotoCoord()">Go</button>
-    <br>
-    <label><input type="checkbox" id="toggle-water"> Water Overlay</label>
-    <label><input type="checkbox" id="toggle-saltmud"> Salt & Mud Overlay</label>
-    <label><input type="checkbox" id="toggle-road"> Road Overlay</label>
-    <label><input type="checkbox" id="toggle-structure"> Structure Overlay</label>
-    <label><input type="checkbox" id="toggle-sanctuary"> Sanctuary Overlay</label>
-    <label><input type="checkbox" id="toggle-migration"> Migration Overlay</label>
-    <label><input type="checkbox" id="toggle-patrol"> Patrol Overlay</label>
   </div>
 
-  <!-- Map Container with Overlays -->
+  <div id="overlay-buttons">
+    <img src="button-on.png" id="btn-water" class="map-toggle-btn" alt="Water Button" />
+    <img src="button-on.png" id="btn-saltmud" class="map-toggle-btn" alt="Saltmud Button" />
+    <img src="button-on.png" id="btn-road" class="map-toggle-btn" alt="Road Button" />
+    <img src="button-on.png" id="btn-structure" class="map-toggle-btn" alt="Structure Button" />
+    <img src="button-on.png" id="btn-sanctuary" class="map-toggle-btn" alt="Sanctuary Button" />
+    <img src="button-on.png" id="btn-migration" class="map-toggle-btn" alt="Migration Button" />
+    <img src="button-on.png" id="btn-patrol" class="map-toggle-btn" alt="Patrol Button" />
+    <img src="button-on.png" id="btn-map-toggle" class="map-toggle-btn" alt="Map Toggle Button" style="opacity: 0.5;" />
+  </div>
+
   <div id="map-container">
     <div id="background-overlay"></div>
     <div id="map"></div>
     <div id="tv-overlay"></div>
   </div>
+  <div id="tv-overlay"></div>
 
-  <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script>
     const map = L.map('map', {
@@ -125,7 +176,6 @@
     const mapSize = 4096;
     const imageBounds = [[0, 0], [mapSize, mapSize]];
 
-    // Custom panes for z-index order
     map.createPane('base'); map.getPane('base').style.zIndex = 200;
     map.createPane('water'); map.getPane('water').style.zIndex = 300;
     map.createPane('terrain'); map.getPane('terrain').style.zIndex = 400;
@@ -136,11 +186,9 @@
     map.createPane('migration'); map.getPane('migration').style.zIndex = 850;
     map.createPane('patrol'); map.getPane('patrol').style.zIndex = 900;
 
-    // Layers
     const baseLayer = L.imageOverlay('map-base.png', imageBounds, { pane: 'base' }).addTo(map);
     const terrainLayer = L.imageOverlay('terrain-line.png', imageBounds, { pane: 'terrain' }).addTo(map);
 
-    // Toggleable layers (start OFF)
     const waterLayer = L.imageOverlay('water-layer.png', imageBounds, { pane: 'water' });
     const saltmudLayer = L.imageOverlay('salt-mud-layer.png', imageBounds, { pane: 'saltmud', opacity: 0.8 });
     const roadLayer = L.imageOverlay('road-layer.png', imageBounds, { pane: 'road', opacity: 0.8 });
@@ -151,28 +199,69 @@
 
     map.fitBounds(imageBounds);
 
-    // Modular toggle system
     const toggleableLayers = {
-      "toggle-water": waterLayer,
-      "toggle-saltmud": saltmudLayer,
-      "toggle-road": roadLayer,
-      "toggle-structure": structureLayer,
-      "toggle-sanctuary": sanctuaryLayer,
-      "toggle-migration": migrationLayer,
-      "toggle-patrol": patrolLayer,
+      "btn-water": waterLayer,
+      "btn-saltmud": saltmudLayer,
+      "btn-road": roadLayer,
+      "btn-structure": structureLayer,
+      "btn-sanctuary": sanctuaryLayer,
+      "btn-migration": migrationLayer,
+      "btn-patrol": patrolLayer,
     };
 
-    for (const [checkboxId, layer] of Object.entries(toggleableLayers)) {
-      const checkbox = document.getElementById(checkboxId);
-      if (!checkbox) continue;
-      checkbox.addEventListener('change', function () {
-        if (this.checked) {
+    for (const [buttonId, layer] of Object.entries(toggleableLayers)) {
+      const button = document.getElementById(buttonId);
+      if (!button) continue;
+
+      let isActive = false;
+
+      button.addEventListener('click', function () {
+        if (!isActive) {
           layer.addTo(map);
+          button.style.opacity = 0.8;
+          isActive = true;
         } else {
           map.removeLayer(layer);
+          button.style.opacity = 0;
+          isActive = false;
         }
       });
     }
+
+    window.addEventListener('load', () => {
+      map.invalidateSize();
+
+      const soundOn = document.getElementById('sound-on');
+      const soundOff = document.getElementById('sound-off');
+      soundOn.volume = 1.0;
+      soundOff.volume = 1.0;
+
+      const btnMapToggle = document.getElementById('btn-map-toggle');
+      const mapContainer = document.getElementById('map-container');
+      let mapVisible = false;
+
+      btnMapToggle.addEventListener('click', function () {
+          if (!mapVisible) {
+            mapContainer.style.display = 'block';
+            setTimeout(() => {
+              mapContainer.style.opacity = '1';
+              map.invalidateSize();
+            }, 10);
+            soundOn.currentTime = 0;
+            soundOn.play();
+          } else {
+            mapContainer.style.opacity = '0';
+            setTimeout(() => {
+              mapContainer.style.display = 'none';
+            }, 300); // Shorter fade-out duration
+            soundOff.currentTime = 0;
+            soundOff.play();
+          }
+
+        mapVisible = !mapVisible;
+        btnMapToggle.style.opacity = mapVisible ? '1' : '0.5';
+      });
+    });
 
     let markerLayer = null;
 
@@ -189,11 +278,8 @@
       markerLayer = L.marker([lat, lng], { icon: divIcon }).addTo(map);
       map.setView([lat, lng], map.getZoom());
     }
-
-    window.addEventListener('load', () => {
-      map.invalidateSize();
-    });
   </script>
+  <audio id="sound-on" src="monitor-on.mp3"></audio>
+  <audio id="sound-off" src="monitor-off.mp3"></audio>
 </body>
-
 </html>
