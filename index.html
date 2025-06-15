@@ -99,11 +99,21 @@
       pointer-events: none;
       z-index: 25;
     }
+    
+    .status-light {
+      position: fixed;
+      top: 3%;
+      right: 14.65%;
+      width: 128px;
+      height: 127px;
+      z-index: 30;
+      pointer-events: none;
+    }
 
     .map-toggle-btn {
       position: absolute;
-      width: 40px;
-      height: 40px;
+      width: 128px;
+      height: 127px;
       pointer-events: auto;
       opacity: 0;
       transition: opacity 0.3s ease;
@@ -117,7 +127,7 @@
     #btn-sanctuary  { top: 57.10%; left: 20.79%; }
     #btn-migration  { top: 51.60%; left: 18.00%; }
     #btn-patrol     { top: 57.10%; left: 18.04%; }
-    #btn-map-toggle { top: 76%; left: 5%; opacity: 0.5; }
+    #btn-map-toggle { top: 80%; right: 14.65%; opacity: 0; }
 
     .pulse-marker {
       width: 20px;
@@ -135,6 +145,7 @@
   </style>
 </head>
 <body>
+
   <img id="control-panel-base" src="control-panel-base.png" alt="" />
 
   <div id="coord-input">
@@ -152,7 +163,8 @@
     <img src="button-on.png" id="btn-sanctuary" class="map-toggle-btn" alt="Sanctuary Button" />
     <img src="button-on.png" id="btn-migration" class="map-toggle-btn" alt="Migration Button" />
     <img src="button-on.png" id="btn-patrol" class="map-toggle-btn" alt="Patrol Button" />
-    <img src="button-on.png" id="btn-map-toggle" class="map-toggle-btn" alt="Map Toggle Button" style="opacity: 0.5;" />
+    <img src="switch-off.png" id="btn-map-toggle" class="map-toggle-btn" alt="Map Toggle Button" />'
+    <img src="light-off.png" id="status-light" class="status-light" alt="Status Light" />
   </div>
 
   <div id="map-container">
@@ -237,29 +249,37 @@
       soundOff.volume = 1.0;
 
       const btnMapToggle = document.getElementById('btn-map-toggle');
+      const statusLight = document.getElementById('status-light');
       const mapContainer = document.getElementById('map-container');
       let mapVisible = false;
 
       btnMapToggle.addEventListener('click', function () {
-          if (!mapVisible) {
-            mapContainer.style.display = 'block';
-            setTimeout(() => {
-              mapContainer.style.opacity = '1';
-              map.invalidateSize();
-            }, 10);
-            soundOn.currentTime = 0;
-            soundOn.play();
-          } else {
-            mapContainer.style.opacity = '0';
-            setTimeout(() => {
-              mapContainer.style.display = 'none';
-            }, 300); // Shorter fade-out duration
-            soundOff.currentTime = 0;
-            soundOff.play();
-          }
+        if (!mapVisible) {
+          mapContainer.style.display = 'block';
+          setTimeout(() => {
+            mapContainer.style.opacity = '1';
+            map.invalidateSize();
+          }, 10);
+
+          soundOn.currentTime = 0;
+          soundOn.play();
+
+          btnMapToggle.src = 'switch-on.png';
+          statusLight.src = 'light-on.png';
+        } else {
+          mapContainer.style.opacity = '0';
+          setTimeout(() => {
+            mapContainer.style.display = 'none';
+          }, 300);
+
+          soundOff.currentTime = 0;
+          soundOff.play();
+
+          btnMapToggle.src = 'switch-off.png';
+          statusLight.src = 'light-off.png';
+        }
 
         mapVisible = !mapVisible;
-        btnMapToggle.style.opacity = mapVisible ? '1' : '0.5';
       });
     });
 
