@@ -4,30 +4,40 @@
   <meta charset="UTF-8" />
   <title>Renatus Map</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    crossorigin=""
-  />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
   <style>
     html, body {
       margin: 0;
       height: 100vh;
       background: #000;
       overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
     }
 
-    #control-panel-base {
+    #control-panel-wrapper {
       position: fixed;
       top: 0;
       left: 50%;
       height: 100vh;
       transform: translateX(-50%);
-      z-index: -100;
+      z-index: 0;
       pointer-events: none;
+    }
+
+    #control-panel-base {
+      height: 100vh;
+    }
+
+    #tv-overlay {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 100vh;
+      height: 100vh;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 3;
+      background: url('tv-frame.png') center center no-repeat;
+      background-size: contain;
     }
 
     #map-container {
@@ -43,7 +53,7 @@
       opacity: 0;
       transition: opacity 1s ease-in;
       display: none;
-      z-index: 5;
+      z-index: 1;
     }
 
     #map {
@@ -65,24 +75,11 @@
       pointer-events: none;
     }
 
-    #tv-overlay {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      width: 100vh;
-      height: 100vh;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-      z-index: 10;
-      background: url('tv-frame.png') center center no-repeat;
-      background-size: contain;
-    }
-
     #coord-input {
       position: fixed;
       top: 10px;
       left: 10px;
-      z-index: 20;
+      z-index: 100;
       background: rgba(0,0,0,0.6);
       padding: 10px;
       color: #fff;
@@ -91,43 +88,45 @@
     }
 
     #overlay-buttons {
-      position: fixed;
+      position: absolute;
       top: 0;
       left: 0;
-      width: 100vw;
-      height: 100vh;
+      width: 100%;
+      height: 100%;
       pointer-events: none;
-      z-index: 25;
-    }
-    
-    .status-light {
-      position: fixed;
-      top: 3%;
-      right: 14.65%;
-      width: 128px;
-      height: 127px;
-      z-index: 30;
-      pointer-events: none;
+      z-index: 200;
     }
 
     .map-toggle-btn {
       position: absolute;
-      width: 128px;
-      height: 127px;
+      width: 4vh;
+      height: 4vh;
       pointer-events: auto;
-      opacity: 0;
       transition: opacity 0.3s ease;
       cursor: pointer;
+      opacity: 0; /* Start hidden */
     }
 
-    #btn-water      { top: 51.60%; left: 12.46%; }
-    #btn-saltmud    { top: 57.10%; left: 12.50%; }
-    #btn-road       { top: 51.60%; left: 15.25%; }
-    #btn-structure  { top: 51.60%; left: 20.75%; }
-    #btn-sanctuary  { top: 57.10%; left: 20.79%; }
-    #btn-migration  { top: 51.60%; left: 18.00%; }
-    #btn-patrol     { top: 57.10%; left: 18.04%; }
-    #btn-map-toggle { top: 80%; right: 14.65%; opacity: 0; }
+    #btn-map-toggle {
+      opacity: 1; /* Always visible */
+    }
+
+    .status-light {
+      position: absolute;
+      width: 4vh;
+      height: 4vh;
+      pointer-events: none;
+    }
+
+    #btn-water      { top: 51.15%; left: 1.72%; }
+    #btn-saltmud    { top: 56.65%; left: 1.72%; }
+    #btn-road       { top: 51.15%; left: 5.27%; }
+    #btn-structure  { top: 51.15%; left: 8.82%; }
+    #btn-sanctuary  { top: 56.65%; left: 8.82%; }
+    #btn-migration  { top: 51.15%; left: 12.38%; }
+    #btn-patrol     { top: 56.65%; left: 12.38%; }
+    #btn-map-toggle { top: 82.5%; left: 90.52%; transform: scale(4); }
+    #status-light   { top: 5.8%; left: 90.52%; pointer-events: none; transform: scale(2.6); }
 
     .pulse-marker {
       width: 20px;
@@ -145,8 +144,20 @@
   </style>
 </head>
 <body>
-
-  <img id="control-panel-base" src="control-panel-base.png" alt="" />
+  <div id="control-panel-wrapper">
+    <img id="control-panel-base" src="control-panel-base.png" alt="" />
+    <div id="overlay-buttons">
+      <img src="button-on.png" id="btn-water" class="map-toggle-btn" />
+      <img src="button-on.png" id="btn-saltmud" class="map-toggle-btn" />
+      <img src="button-on.png" id="btn-road" class="map-toggle-btn" />
+      <img src="button-on.png" id="btn-structure" class="map-toggle-btn" />
+      <img src="button-on.png" id="btn-sanctuary" class="map-toggle-btn" />
+      <img src="button-on.png" id="btn-migration" class="map-toggle-btn" />
+      <img src="button-on.png" id="btn-patrol" class="map-toggle-btn" />
+      <img src="switch-off.png" id="btn-map-toggle" class="map-toggle-btn" style="opacity: 1;" />
+      <img src="light-off.png" id="status-light" class="status-light" />
+    </div>
+  </div>
 
   <div id="coord-input">
     <label>Jump to Coord:</label>
@@ -155,24 +166,15 @@
     <button onclick="gotoCoord()">Go</button>
   </div>
 
-  <div id="overlay-buttons">
-    <img src="button-on.png" id="btn-water" class="map-toggle-btn" alt="Water Button" />
-    <img src="button-on.png" id="btn-saltmud" class="map-toggle-btn" alt="Saltmud Button" />
-    <img src="button-on.png" id="btn-road" class="map-toggle-btn" alt="Road Button" />
-    <img src="button-on.png" id="btn-structure" class="map-toggle-btn" alt="Structure Button" />
-    <img src="button-on.png" id="btn-sanctuary" class="map-toggle-btn" alt="Sanctuary Button" />
-    <img src="button-on.png" id="btn-migration" class="map-toggle-btn" alt="Migration Button" />
-    <img src="button-on.png" id="btn-patrol" class="map-toggle-btn" alt="Patrol Button" />
-    <img src="switch-off.png" id="btn-map-toggle" class="map-toggle-btn" alt="Map Toggle Button" />'
-    <img src="light-off.png" id="status-light" class="status-light" alt="Status Light" />
-  </div>
-
   <div id="map-container">
     <div id="background-overlay"></div>
     <div id="map"></div>
-    <div id="tv-overlay"></div>
   </div>
+
   <div id="tv-overlay"></div>
+
+  <audio id="sound-on" src="monitor-on.mp3"></audio>
+  <audio id="sound-off" src="monitor-off.mp3"></audio>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script>
@@ -299,7 +301,5 @@
       map.setView([lat, lng], map.getZoom());
     }
   </script>
-  <audio id="sound-on" src="monitor-on.mp3"></audio>
-  <audio id="sound-off" src="monitor-off.mp3"></audio>
 </body>
 </html>
