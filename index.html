@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html>v
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -10,7 +10,7 @@
     html, body {
       margin: 0;
       height: 100vh;
-      background: #000;
+      background: #00000000;
       overflow: hidden;
     }
 
@@ -40,7 +40,18 @@
       background: url('tv-frame.png') center center no-repeat;
       background-size: contain;
     }
-
+      #background {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 100vw;
+      height: 100vw;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: -1;
+      background: url('background.png') center center no-repeat;
+      background-size: contain;
+    }
     #map-container {
       position: fixed;
       top: 50%;
@@ -122,6 +133,7 @@
     #btn-water      { top: 51.15%; left: 1.72%; }
     #btn-saltmud    { top: 56.65%; left: 1.72%; }
     #btn-road       { top: 51.15%; left: 5.27%; }
+    #btn-topography { top: 56.65%; left: 5.27%; }
     #btn-structure  { top: 51.15%; left: 8.82%; }
     #btn-sanctuary  { top: 56.65%; left: 8.82%; }
     #btn-migration  { top: 51.15%; left: 12.38%; }
@@ -132,15 +144,35 @@
     .pulse-marker {
       width: 20px;
       height: 20px;
-      background: rgba(255, 0, 0, 0.7);
+      position: relative;
+      background: rgba(255, 0, 0, 0.8);
       border-radius: 50%;
-      animation: pulse 1.2s infinite;
+      transform: translate(-50%, -50%);
+      z-index: 999;
+    }
+
+    .pulse-marker::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 0, 0, 0.4);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      animation: pulse 1.5s ease-out infinite;
     }
 
     @keyframes pulse {
-      0% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.5); opacity: 0.5; }
-      100% { transform: scale(1); opacity: 1; }
+      0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(2.5);
+        opacity: 0;
+      }
     }
   </style>
 </head>
@@ -155,6 +187,7 @@
       <img src="button-on.png" id="btn-sanctuary" class="map-toggle-btn" />
       <img src="button-on.png" id="btn-migration" class="map-toggle-btn" />
       <img src="button-on.png" id="btn-patrol" class="map-toggle-btn" />
+      <img src="button-on.png" id="btn-topography" class="map-toggle-btn" />
       <img src="switch-off.png" id="btn-map-toggle" class="map-toggle-btn" style="opacity: 1;" />
       <img src="light-off.png" id="status-light" class="status-light" />
     </div>
@@ -162,8 +195,7 @@
 
   <div id="coord-input">
     <label>Jump to Coord:</label>
-    <input type="number" id="coord-x" placeholder="X" />
-    <input type="number" id="coord-y" placeholder="Y" />
+    <input type="text" id="coord-full" placeholder="Paste full coords..." />
     <button onclick="gotoCoord()">Go</button>
   </div>
 
@@ -173,6 +205,7 @@
   </div>
 
   <div id="tv-overlay"></div>
+  <div id="background"></div>
 
   <audio id="sound-on" src="monitor-on.mp3"></audio>
   <audio id="sound-off" src="monitor-off.mp3"></audio>
@@ -192,6 +225,7 @@
     const imageBounds = [[0, 0], [mapSize, mapSize]];
 
     map.createPane('base'); map.getPane('base').style.zIndex = 200;
+    map.createPane('topography'); map.getPane('topography').style.zIndex = 250;
     map.createPane('water'); map.getPane('water').style.zIndex = 300;
     map.createPane('terrain'); map.getPane('terrain').style.zIndex = 400;
     map.createPane('road'); map.getPane('road').style.zIndex = 500;
@@ -211,6 +245,7 @@
     const sanctuaryLayer = L.imageOverlay('sanctuary-layer.png', imageBounds, { pane: 'sanctuary' });
     const migrationLayer = L.imageOverlay('migration-layer.png', imageBounds, { pane: 'migration' });
     const patrolLayer = L.imageOverlay('patrol-layer.png', imageBounds, { pane: 'patrol' });
+    const topographyLayer = L.imageOverlay('topography-layer.png', imageBounds, { pane: 'topography' });
 
     map.fitBounds(imageBounds);
 
@@ -222,6 +257,7 @@
       "btn-sanctuary": sanctuaryLayer,
       "btn-migration": migrationLayer,
       "btn-patrol": patrolLayer,
+      "btn-topography":topographyLayer,
     };
 
     for (const [buttonId, layer] of Object.entries(toggleableLayers)) {
@@ -288,19 +324,52 @@
 
     let markerLayer = null;
 
-    function gotoCoord() {
-      const x = parseFloat(document.getElementById('coord-x').value);
-      const y = parseFloat(document.getElementById('coord-y').value);
-      if (isNaN(x) || isNaN(y)) return;
+    function parsePlayerCoord(input) {
+      // Remove all commas (thousands separators), then extract numbers
+      const cleaned = input.replace(/,/g, '').trim();
+      const matches = cleaned.match(/-?\d+(\.\d+)?/g);
 
-      const lat = mapSize - y;
-      const lng = x;
+      if (!matches || matches.length < 2) {
+        alert('Invalid coordinate format. Please paste full in-game coords.');
+        return null;
+      }
+
+      const x = parseFloat(matches[0]);
+      const y = parseFloat(matches[1]);
+
+      if (isNaN(x) || isNaN(y)) {
+        alert('Invalid numbers in coordinates.');
+        return null;
+      }
+
+      return { x, y };
+    }
+
+    function gotoCoord() {
+      const input = document.getElementById('coord-full').value;
+      const parsed = parsePlayerCoord(input);
+      if (!parsed) return;
+
+      // Affine transform derived from calibration
+      const pxX = 0.00002517 * parsed.x + 0.00331425 * parsed.y + 1853.23;
+      const pxY = 0.00331419 * parsed.x + 0.00004456 * parsed.y + 1981.76;
+
+      const lat = mapSize - pxY;
+      const lng = pxX;
 
       if (markerLayer) map.removeLayer(markerLayer);
-      const divIcon = L.divIcon({ className: 'pulse-marker' });
+
+      const divIcon = L.divIcon({
+        className: 'pulse-marker',
+        iconSize: [20, 20],
+        iconAnchor: [10, 10]
+      });
+
       markerLayer = L.marker([lat, lng], { icon: divIcon }).addTo(map);
       map.setView([lat, lng], map.getZoom());
     }
+    
+    
   </script>
 </body>
 </html>
