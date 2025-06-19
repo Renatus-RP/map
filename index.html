@@ -209,6 +209,7 @@
 
   <audio id="sound-on" src="monitor-on.mp3"></audio>
   <audio id="sound-off" src="monitor-off.mp3"></audio>
+  <audio id="click-sound" src="click.mp3"></audio>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script>
@@ -267,6 +268,10 @@
       let isActive = false;
 
       button.addEventListener('click', function () {
+        const clickSound = document.getElementById('click-sound');
+        clickSound.currentTime = 0;
+        clickSound.play();
+
         if (!isActive) {
           layer.addTo(map);
           button.style.opacity = 0.8;
