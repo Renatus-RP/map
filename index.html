@@ -399,20 +399,36 @@
     let btnGrid;
     let gridLayerGroup;
     const mapLabels = [
-      { name: "Sunken Forest", x: 2300, y: 1800 },
-      { name: "Lake Veil", x: 3100, y: 2900 },
-      { name: "Cradle Cliffs", x: 1500, y: 1200 },
-      // Add more labels here
     ];
 
     const map = L.map('map', {
       crs: L.CRS.Simple,
-      minZoom: -2,
-      maxZoom: 2,
       zoomControl: false,
       maxBounds: [[0, 0], [4096, 4096]],
       maxBoundsViscosity: 1.0
     });
+
+    function setMinZoomToFitViewport(maxHeightInDvh = 100) {
+      const mapHeightInPixels = window.innerHeight * (maxHeightInDvh / 100);
+      const mapWidthInPixels = map.getContainer().clientWidth;
+
+      const scaleY = mapHeightInPixels / 4096;
+      const scaleX = mapWidthInPixels / 4096;
+
+      const scale = Math.min(scaleX, scaleY) * 0.9;
+      const zoom = map.getScaleZoom(scale, 0);
+
+      map.setMinZoom(zoom);
+    }
+
+
+    function setMinZoomToFitMap() {
+      const bounds = [[0, 0], [4096, 4096]];
+      const minZoom = map.getBoundsZoom(bounds, false); // false = fit inside view
+      map.setMinZoom(minZoom);
+    }
+
+    setMinZoomToFitMap();
 
     const mapSize = 4096;
     const imageBounds = [[0, 0], [mapSize, mapSize]];
@@ -719,6 +735,7 @@
           setTimeout(() => {
             mapContainer.style.opacity = '1';
             map.invalidateSize();
+            setMinZoomToFitViewport(100); // <-- call it here
           }, 10);
 
           soundOn.currentTime = 0;
@@ -773,7 +790,12 @@
 
         mapVisible = !mapVisible;
       });
-      
+      window.addEventListener('resize', () => {
+        if (mapVisible) {
+          setMinZoomToFitViewport(100);
+        }
+      });
+
     });
 
     let markerLayer = null;
