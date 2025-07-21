@@ -1,4 +1,4 @@
-<!DOCTYPE html>v
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -13,6 +13,48 @@
       height: 100vh;
       background: #00000000;
       overflow: hidden;
+    }
+
+    #overlay-buttons {
+      pointer-events: auto;
+      z-index: 9999;
+    }
+
+    #btn-grid {
+      pointer-events: auto;
+      cursor: pointer;
+      z-index: 9999;
+    }
+
+    #category-info-box {
+      position: absolute;
+      top: 7%;
+      left: 2.2%;
+      width: 16vh;
+      background: rgba(0, 0, 0, 0);
+      color: rgba(171, 255, 171, 0.548);
+      padding: 1vh;
+      font-family: 'Courier New', monospace;
+      border-radius: 0.5vh;
+      font-size: 2.4vh;
+      z-index: 201;
+      pointer-events: none;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    #category-info-box span {
+      display: block;
+      font-size: 1.7vh;
+      font-weight: normal;
+      text-transform: none;
+      text-align: left;
+      margin-top: 2.6vh;
+    }
+
+    #category-info-box.default-list-mode span {
+      margin-bottom: 0vh;
+      margin-top: 2.6vh;
     }
 
     #control-panel-wrapper {
@@ -41,6 +83,44 @@
       background: url('tv-frame.png') center center no-repeat;
       background-size: contain;
     }
+    
+    #gap-fix-overlay {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      height: 100vh;
+      pointer-events: none;
+      z-index: 99999;
+      background-size: contain;
+    }
+
+    #floating-labels {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    .floating-label {
+      position: absolute;
+      color: #c0ffc0;
+      font-family: 'Courier New', monospace;
+      font-size: 2vh;
+      white-space: nowrap;
+      text-shadow:
+        0 0 2px #7fff7f,
+        0 0 6px #aaffaa,
+        0 0 12px #c0ffc0,
+        0 0 18px #c0ffc0,
+        0 0 24px #e0ffe0;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
       #background {
       position: fixed;
       top: 50%;
@@ -89,24 +169,51 @@
     }
 
     #coord-input {
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      z-index: 100;
-      background: rgba(0,0,0,0.6);
-      padding: 10px;
-      color: #fff;
-      font-family: sans-serif;
-      border-radius: 6px;
+      position: absolute;
+      top: 43.3%;
+      left: 8.3%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0);
+      width: 18vh;
+      height: 3.8vh;
+      vertical-align: middle;
+      font-size: 3.8vh;
+      padding: 0vh;
+      border-radius: 0.8vh;
+      font-family: 'Courier New', monospace;
+      font-size: 1.8vh;
+      z-index: 9999;
+      pointer-events: auto;
     }
 
+    #coord-input input {
+      width: 18vh;
+      height: 3.8h;
+      font-size: 1.4vh;
+      font-family: 'Courier New', monospace;
+      background: none;
+      border: none;
+      color: rgba(171, 255, 171, 0.74);
+      outline: none;
+      text-align: center;
+      box-sizing: border-box;
+
+      padding-top: 1.4vh;
+      padding-bottom: 0.4vh;
+      line-height: normal;
+    }
+
+#coord-input input::placeholder {
+  color: #c0ffc0;
+  opacity: 0.7;
+}
     #overlay-buttons {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      pointer-events: none;
+      pointer-events: auto;
       z-index: 200;
     }
 
@@ -117,11 +224,21 @@
       pointer-events: auto;
       transition: opacity 0.3s ease;
       cursor: pointer;
-      opacity: 0; /* Start hidden */
+      opacity: 0.5;
     }
 
+    .layer-toggle {
+      width: 6.25vh;
+      height: 2.5vh;
+      opacity: 1;
+    }
+
+    .dummy-button {
+      pointer-events: none;
+      opacity: 1;
+    }
     #btn-map-toggle {
-      opacity: 1; /* Always visible */
+      opacity: 1;
     }
 
     .status-light {
@@ -130,15 +247,11 @@
       height: 4vh;
       pointer-events: none;
     }
-
-    #btn-water      { top: 51.15%; left: 1.72%; }
-    #btn-saltmud    { top: 56.65%; left: 1.72%; }
-    #btn-road       { top: 51.15%; left: 5.27%; }
-    #btn-topography { top: 56.65%; left: 5.27%; }
-    #btn-structure  { top: 51.15%; left: 8.82%; }
-    #btn-sanctuary  { top: 56.65%; left: 8.82%; }
-    #btn-migration  { top: 51.15%; left: 12.38%; }
-    #btn-patrol     { top: 56.65%; left: 12.38%; }
+    #btn-grid {
+      pointer-events: auto;
+      cursor: pointer;
+      z-index: 9999;
+    }
     #btn-map-toggle { top: 82.5%; left: 90.52%; transform: scale(4); }
     #status-light   { top: 5.8%; left: 90.52%; pointer-events: none; transform: scale(2.6); }
 
@@ -152,6 +265,21 @@
       z-index: 999;
     }
 
+    .map-text-label {
+      font-family: 'Courier New', monospace;
+      color: #c0ffc0; /* original green text */
+      font-size: 1.6vh;
+      text-align: center;
+      white-space: nowrap;
+      pointer-events: none;
+      text-shadow:
+        0 0 2px #7fff7f,     /* soft core glow */
+        0 0 6px #aaffaa,     /* lighter halo */
+        0 0 12px #c0ffc0,    /* matches text */
+        0 0 18px #c0ffc0,    /* soft outer aura */
+        0 0 24px #e0ffe0;    /* subtle neon fade */
+    }
+
     .pulse-marker::after {
       content: "";
       position: absolute;
@@ -163,6 +291,12 @@
       border-radius: 50%;
       transform: translate(-50%, -50%);
       animation: pulse 1.5s ease-out infinite;
+    }
+
+    .mode-toggle {
+      height: 10vh;
+      width: auto;
+      opacity: 1 !important;
     }
 
     @keyframes pulse {
@@ -181,30 +315,78 @@
   <div id="control-panel-wrapper">
     <img id="control-panel-base" src="control-panel-base.png" alt="" />
     <div id="overlay-buttons">
-      <img src="button-on.png" id="btn-water" class="map-toggle-btn" />
-      <img src="button-on.png" id="btn-saltmud" class="map-toggle-btn" />
-      <img src="button-on.png" id="btn-road" class="map-toggle-btn" />
-      <img src="button-on.png" id="btn-structure" class="map-toggle-btn" />
-      <img src="button-on.png" id="btn-sanctuary" class="map-toggle-btn" />
-      <img src="button-on.png" id="btn-migration" class="map-toggle-btn" />
-      <img src="button-on.png" id="btn-patrol" class="map-toggle-btn" />
-      <img src="button-on.png" id="btn-topography" class="map-toggle-btn" />
-      <img src="switch-off.png" id="btn-map-toggle" class="map-toggle-btn" style="opacity: 1;" />
+      <img src="switch-off.png" id="btn-map-toggle" class="map-toggle-btn" style="opacity: 1;" draggable="false"/>
       <img src="light-off.png" id="status-light" class="status-light" />
-    </div>
-  </div>
+      <img src="button-off.png" id="btn-cat-zones" class="map-toggle-btn category-toggle" data-category="cat-zones" data-state="off" style="top: 60%; left: 1.72%; opacity: 1;" draggable="false"/>
+      <img src="button-off.png" id="btn-cat-env" class="map-toggle-btn category-toggle" data-category="cat-env" data-state="off" style="top: 60%; left: 4.365%; opacity: 1;" draggable="false"/>
+      <img src="button-off.png" id="btn-cat-manmade" class="map-toggle-btn category-toggle" data-category="cat-manmade" data-state="off" style="top: 60%; left: 7.01%; opacity: 1;" draggable="false"/>
+      <img src="button-off.png" id="btn-cat-traversal" class="map-toggle-btn category-toggle" data-category="cat-traversal" data-state="off" style="top: 60%; left: 9.655%; opacity: 1;" draggable="false"/>
+      <img src="button-off.png" id="btn-cat-labels" class="map-toggle-btn category-toggle" data-category="cat-labels" data-state="off" style="top: 60%; left: 12.3%; opacity: 1;" draggable="false"/>
+      <!-- CATEGORY CONTAINERS -->
+      <div id="cat-zones" class="overlay-category" style="display:none;">
+        <img src="layerbutton-off.png" id="btn-patrol" class="map-toggle-btn layer-toggle" data-state="off" style="top: 66%; left: 1.72%;" draggable="false"/>
+        <img src="layerbutton-off.png" id="btn-migration" class="map-toggle-btn layer-toggle" data-state="off" style="top: 70%; left: 1.72%;" draggable="false"/>
+        <img src="layerbutton-off.png" id="btn-sanctuary" class="map-toggle-btn layer-toggle" data-state="off" style="top: 74%; left: 1.72%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 78%; left: 1.72%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 82%; left: 1.72%;" draggable="false"/>
+      </div>
 
-  <div id="coord-input">
-    <label>Jump to Coord:</label>
-    <input type="text" id="coord-full" placeholder="Paste full coords..." />
-    <button onclick="gotoCoord()">Go</button>
+      <div id="cat-env" class="overlay-category" style="display:none;">
+        <img src="layerbutton-off.png" id="btn-water" class="map-toggle-btn layer-toggle" data-state="off" style="top: 66%; left: 1.72%;" draggable="false"/>
+        <img src="layerbutton-off.png" id="btn-salt" class="map-toggle-btn layer-toggle" data-state="off" style="top: 70%; left: 1.72%;" draggable="false"/>
+        <img src="layerbutton-off.png" id="btn-mud" class="map-toggle-btn layer-toggle" data-state="off" style="top: 74%; left: 1.72%;" draggable="false"/>
+        <img src="layerbutton-off.png" id="btn-topography" class="map-toggle-btn layer-toggle" style="top: 78%; left: 1.72%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 82%; left: 1.72%;" draggable="false"/>
+      </div>
+
+      <div id="cat-manmade" class="overlay-category" style="display:none;">
+        <img src="layerbutton-off.png" id="btn-road" class="map-toggle-btn layer-toggle" data-state="off" style="top: 66%; left: 1.72%;" draggable="false"/>
+        <img src="layerbutton-off.png" id="btn-structure" class="map-toggle-btn layer-toggle" data-state="off" style="top: 70%; left: 1.72%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 74%; left: 1.72%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 78%; left: 1.72%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 82%; left: 1.72%;" draggable="false"/>
+      </div>
+
+      <div id="cat-traversal" class="overlay-category" style="display:none;">
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 66%; left: 1.72%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 70%; left: 1.72%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 74%; left: 1.72%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 78%; left: 1.72%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 82%; left: 1.72%;" draggable="false"/>
+      </div>
+
+      <div id="cat-labels" class="overlay-category" style="display:none;">
+        <img src="layerbutton-off.png" id="btn-lakes" class="map-toggle-btn layer-toggle" data-state="off" style="top: 66%; left: 1.72%;" draggable="false"/>
+        <img src="layerbutton-off.png" id="btn-rivers" class="map-toggle-btn layer-toggle" data-state="off" style="top: 70%; left: 1.72%;" draggable="false"/>
+        <img src="layerbutton-off.png" id="btn-outposts" class="map-toggle-btn layer-toggle" data-state="off" style="top: 74%; left: 1.72%;" draggable="false"/>
+        <img src="layerbutton-off.png" id="btn-landmarks" class="map-toggle-btn layer-toggle" data-state="off" style="top: 78%; left: 1.72%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 82%; left: 1.72%;" draggable="false"/>
+      </div>
+
+      <div id="dummy-fillers">
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 66%; left: 1.72%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 70%; left: 1.72%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 74%; left: 1.72%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 78%; left: 1.72%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 82%; left: 1.72%;" draggable="false"/>
+      </div>
+      <img src="modebutton-off.png" id="btn-grid" class="map-toggle-btn mode-toggle" data-state="off" style="top: 48.2%; left: 11%;" draggable="false"/>
+      <img src="modebutton-off.png" id="btn-grid" class="map-toggle-btn mode-toggle" data-state="off" style="top: 48.2%; left: 8%;" draggable="false"/>
+      <img src="modebutton-off.png" id="btn-grid" class="map-toggle-btn mode-toggle" data-state="off" style="top: 48.2%; left: 5%;" draggable="false"/>
+      <img src="modebutton-off.png" id="btn-grid" class="map-toggle-btn mode-toggle" data-state="off" style="top: 48.2%; left: 2%;" draggable="false"/>
+      <div id="coord-input">
+        <input type="text" id="coord-full" placeholder="Paste coords" />
+      </div>
+
+      <div id="category-info-box" style="display: none;"></div>
+    </div>
   </div>
 
   <div id="map-container">
     <div id="background-overlay"></div>
     <div id="map"></div>
   </div>
-
+  <div id="floating-labels" style="display: none;"></div>
   <div id="tv-overlay"></div>
   <div id="background"></div>
 
@@ -214,11 +396,20 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script>
+    let btnGrid;
+    let gridLayerGroup;
+    const mapLabels = [
+      { name: "Sunken Forest", x: 2300, y: 1800 },
+      { name: "Lake Veil", x: 3100, y: 2900 },
+      { name: "Cradle Cliffs", x: 1500, y: 1200 },
+      // Add more labels here
+    ];
+
     const map = L.map('map', {
       crs: L.CRS.Simple,
       minZoom: -2,
-      maxZoom: 1,
-      zoomControl: true,
+      maxZoom: 2,
+      zoomControl: false,
       maxBounds: [[0, 0], [4096, 4096]],
       maxBoundsViscosity: 1.0
     });
@@ -231,7 +422,8 @@
     map.createPane('water'); map.getPane('water').style.zIndex = 300;
     map.createPane('terrain'); map.getPane('terrain').style.zIndex = 400;
     map.createPane('road'); map.getPane('road').style.zIndex = 500;
-    map.createPane('saltmud'); map.getPane('saltmud').style.zIndex = 600;
+    map.createPane('salt'); map.getPane('salt').style.zIndex = 600;
+    map.createPane('mud'); map.getPane('mud').style.zIndex = 600;
     map.createPane('structure'); map.getPane('structure').style.zIndex = 700;
     map.createPane('sanctuary'); map.getPane('sanctuary').style.zIndex = 800;
     map.createPane('migration'); map.getPane('migration').style.zIndex = 850;
@@ -241,7 +433,8 @@
     const terrainLayer = L.imageOverlay('terrain-line.png', imageBounds, { pane: 'terrain' }).addTo(map);
 
     const waterLayer = L.imageOverlay('water-layer.png', imageBounds, { pane: 'water' });
-    const saltmudLayer = L.imageOverlay('salt-mud-layer.png', imageBounds, { pane: 'saltmud', opacity: 0.8 });
+    const saltLayer = L.imageOverlay('salt-layer.png', imageBounds, { pane: 'salt', opacity: 0.8 });
+    const mudLayer = L.imageOverlay('mud-layer.png', imageBounds, { pane: 'mud', opacity: 0.8 });
     const roadLayer = L.imageOverlay('road-layer.png', imageBounds, { pane: 'road', opacity: 0.8 });
     const structureLayer = L.imageOverlay('structure-layer.png', imageBounds, { pane: 'structure', opacity: 0.8 });
     const sanctuaryLayer = L.imageOverlay('sanctuary-layer.png', imageBounds, { pane: 'sanctuary' });
@@ -249,44 +442,266 @@
     const patrolLayer = L.imageOverlay('patrol-layer.png', imageBounds, { pane: 'patrol' });
     const topographyLayer = L.imageOverlay('topography-layer.png', imageBounds, { pane: 'topography' });
 
-    map.fitBounds(imageBounds);
+    const labelGroups = {
+      "btn-lakes": L.layerGroup(),
+      "btn-rivers": L.layerGroup(),
+      "btn-outposts": L.layerGroup(),
+      "btn-landmarks": L.layerGroup(),
+    };
+    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(2900, 770, "North<br>Lake"));
+    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(1780, 1540, "Highlands<br>Lake"));
+    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(950, 2680, "Snakehead<br>Lagoon"));
+
+    labelGroups["btn-rivers"].addLayer(createLabelFromPixels(2560, 2220, "Delta"));
+
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(870, 1535, "Site ζ-11<br>Site Zeta-11"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(3444, 1540, "Site EL"));
+
+    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(1000, 3070, "Raptor<br>Cliff"));
+    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(2320, 1275, "Ptera<br>Table"));
+    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(2990, 1420, "Roaring<br>Falls"));
+    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(2750, 1660, "Split<br>Rock"));
+
+
 
     const toggleableLayers = {
       "btn-water": waterLayer,
-      "btn-saltmud": saltmudLayer,
+      "btn-salt": saltLayer,
+      "btn-mud": mudLayer,
       "btn-road": roadLayer,
       "btn-structure": structureLayer,
       "btn-sanctuary": sanctuaryLayer,
       "btn-migration": migrationLayer,
       "btn-patrol": patrolLayer,
-      "btn-topography":topographyLayer,
+      "btn-topography": topographyLayer,
+
+      "btn-regions": L.imageOverlay('regions-layer.png', imageBounds, { pane: 'structure', opacity: 0.8 }),
+      "btn-tunnels": L.imageOverlay('tunnels-layer.png', imageBounds, { pane: 'structure', opacity: 0.8 }),
+      "btn-fences": L.imageOverlay('fences-layer.png', imageBounds, { pane: 'structure', opacity: 0.8 }),
+      "btn-trails": L.imageOverlay('trails-layer.png', imageBounds, { pane: 'road', opacity: 0.8 }),
+      "btn-slipstreams": L.imageOverlay('slipstreams-layer.png', imageBounds, { pane: 'road', opacity: 0.8 }),
+      "btn-thermals": L.imageOverlay('thermals-layer.png', imageBounds, { pane: 'road', opacity: 0.8 }),
+      "btn-lakes": labelGroups["btn-lakes"],
+      "btn-rivers": labelGroups["btn-rivers"],
+      "btn-outposts": labelGroups["btn-outposts"],
+      "btn-landmarks": labelGroups["btn-landmarks"],
     };
+
+    function fromPixelCoords(x, y) {
+      const lat = mapSize - y;
+      const lng = x;
+      return [lat, lng];
+    }
+
+    function createLabelFromPixels(x, y, text) {
+      const [lat, lng] = fromPixelCoords(x, y);
+      return createLabel(lat, lng, text);
+    }
+
+    function createLabel(lat, lng, text) {
+      return L.marker([lat, lng], {
+        icon: L.divIcon({
+          className: 'map-text-label',
+          html: `<div>${text}</div>`,
+          iconSize: [100, 20],
+          iconAnchor: [50, 10]
+        }),
+        interactive: false
+      });
+    }
 
     for (const [buttonId, layer] of Object.entries(toggleableLayers)) {
       const button = document.getElementById(buttonId);
       if (!button) continue;
-
-      let isActive = false;
 
       button.addEventListener('click', function () {
         const clickSound = document.getElementById('click-sound');
         clickSound.currentTime = 0;
         clickSound.play();
 
+        const isActive = button.dataset.state === "on";
+
         if (!isActive) {
           layer.addTo(map);
-          button.style.opacity = 0.8;
-          isActive = true;
+          button.src = "layerbutton-on.png";
+          button.dataset.state = "on";
         } else {
           map.removeLayer(layer);
-          button.style.opacity = 0;
-          isActive = false;
+          button.src = "layerbutton-off.png";
+          button.dataset.state = "off";
         }
       });
     }
 
     window.addEventListener('load', () => {
+      btnGrid = document.getElementById('btn-grid');
+      gridLayerGroup = L.layerGroup();
+
+      const cellSize = 4096 / 24;
+      const greek = [
+        "α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι", "κ", "λ", "μ",
+        "ν", "ξ", "ο", "π", "ρ", "σ", "τ", "υ", "φ", "χ", "ψ", "ω"
+      ];
+
+      // Add grid lines
+      for (let i = 1; i < 24; i++) {
+        const x = i * cellSize;
+        const y = i * cellSize;
+        gridLayerGroup.addLayer(L.polyline([[0, x], [4096, x]], { color: '#00ff00', weight: 1, opacity: 0.3 }));
+        gridLayerGroup.addLayer(L.polyline([[y, 0], [y, 4096]], { color: '#00ff00', weight: 1, opacity: 0.3 }));
+      }
+
+      // Add labels
+      for (let i = 0; i < 24; i++) {
+        const offset = (i + 0.5) * cellSize;
+
+
+      }
+
+      const floatLabelContainer = document.createElement('div');
+      floatLabelContainer.id = 'floating-labels';
+      floatLabelContainer.style.display = 'none';
+      document.getElementById('map-container').appendChild(floatLabelContainer);
+
+      const rowLabels = [];
+      const colLabels = [];
+
+      for (let i = 0; i < 24; i++) {
+        const row = document.createElement('div');
+        row.className = 'floating-label';
+        row.innerText = greek[i];
+        floatLabelContainer.appendChild(row);
+        rowLabels.push({ el: row, lat: 4096 - (i + 0.5) * cellSize });
+
+        const col = document.createElement('div');
+        col.className = 'floating-label';
+        col.innerText = (i + 1).toString();
+        floatLabelContainer.appendChild(col);
+        colLabels.push({ el: col, lng: (i + 0.5) * cellSize });
+      }
+
+      function updateFloatingLabels() {
+        const size = map.getSize();
+
+        // Greek Y-axis (float up/down)
+        rowLabels.forEach(({ el, lat }) => {
+          const point = map.latLngToContainerPoint([lat, 0]);
+          const clampedX = Math.min(Math.max(50, point.x), size.x - 40);
+          el.style.left = clampedX + "px";
+          el.style.top = (point.y - 8) + "px";
+        });
+
+        // Number X-axis (float left/right near top)
+        colLabels.forEach(({ el, lng }) => {
+          const point = map.latLngToContainerPoint([map.getBounds().getNorth(), lng]);
+          const clampedY = Math.min(Math.max(50, point.y), size.y - 40);
+          el.style.left = (point.x - 8) + "px";
+          el.style.top = clampedY + "px";
+        });
+      }
+
+
+
+      btnGrid.addEventListener('click', () => {
+        const isOn = btnGrid.dataset.state === "on";
+        const clickSound = document.getElementById('click-sound');
+        clickSound.currentTime = 0;
+        clickSound.play();
+
+        if (!mapVisible) return; // ✅ Don't toggle grid if TV is off
+
+        if (!isOn) {
+          gridLayerGroup.addTo(map);
+          btnGrid.src = "modebutton-on.png";
+          btnGrid.dataset.state = "on";
+          floatLabelContainer.style.display = 'block';
+          map.on('move zoom', updateFloatingLabels);
+          updateFloatingLabels();
+        } else {
+          map.removeLayer(gridLayerGroup);
+          btnGrid.src = "modebutton-off.png";
+          btnGrid.dataset.state = "off";
+          floatLabelContainer.style.display = 'none';
+          map.off('move zoom', updateFloatingLabels);
+        }
+      });
+
+
       map.invalidateSize();
+      map.fitBounds(imageBounds); // <-- Proper map zoom on show
+
+      const categoryButtons = {
+        'btn-cat-zones': 'cat-zones',
+        'btn-cat-env': 'cat-env',
+        'btn-cat-manmade': 'cat-manmade',
+        'btn-cat-traversal': 'cat-traversal',
+        'btn-cat-labels': 'cat-labels',
+      };
+
+      const categoryDescriptions = {
+        'cat-zones': { name: 'ZONES', layers: ['- Patrol', '- Migration', '- Sanctuary'] },
+        'cat-env': { name: 'ENVIRONMENT', layers: ['- Water', '- Salt', '- Mud', '- Topography'] },
+        'cat-manmade': { name: 'MANMADE', layers: ['- Road', '- Structure'] },
+        'cat-traversal': { name: 'TRAVERSAL', layers: ['- Trails', '- Slipstreams', '- Thermals'] },
+        'cat-labels': { name: 'LABELS', layers: ['- Lakes', '- Rivers', '- Outposts', '- Landmarks'] }
+      };
+
+      const defaultInfoContent = `
+        <strong>CATEGORIES</strong>
+        <span>- Zones</span>
+        <span>- Environment</span>
+        <span>- Manmade</span>
+        <span>- Traversal</span>
+        <span>- Labels</span>
+      `;
+
+      let activeCategory = null;
+
+      for (const [btnId, catId] of Object.entries(categoryButtons)) {
+        const btn = document.getElementById(btnId);
+        const cat = document.getElementById(catId);
+
+        btn.addEventListener('click', () => {
+          const clickSound = document.getElementById('click-sound');
+          clickSound.currentTime = 0;
+          clickSound.play();
+
+          if (!mapVisible) return;
+
+          document.querySelectorAll('.overlay-category').forEach(div => div.style.display = 'none');
+          const infoBox = document.getElementById('category-info-box');
+
+          const isOn = btn.dataset.state === "on";
+
+          if (isOn) {
+            btn.src = "button-off.png";
+            btn.dataset.state = "off";
+            activeCategory = null;
+            document.getElementById('dummy-fillers').style.display = 'block';
+            infoBox.innerHTML = defaultInfoContent;
+            infoBox.style.display = 'block';
+            infoBox.classList.add('default-list-mode');
+          } else {
+            document.querySelectorAll('.category-toggle').forEach(otherBtn => {
+              otherBtn.src = "button-off.png";
+              otherBtn.dataset.state = "off";
+            });
+
+            btn.src = "button-on.png";
+            btn.dataset.state = "on";
+            cat.style.display = 'block';
+            activeCategory = catId;
+            document.getElementById('dummy-fillers').style.display = 'none';
+
+            const desc = categoryDescriptions[catId];
+            if (desc) {
+              infoBox.innerHTML = `<strong>${desc.name}</strong>` + desc.layers.map(layer => `<span>${layer}</span>`).join('');
+              infoBox.style.display = 'block';
+              infoBox.classList.remove('default-list-mode');
+            }
+          }
+        });
+      }
 
       const soundOn = document.getElementById('sound-on');
       const soundOff = document.getElementById('sound-off');
@@ -311,6 +726,13 @@
 
           btnMapToggle.src = 'switch-on.png';
           statusLight.src = 'light-on.png';
+
+          const infoBox = document.getElementById('category-info-box');
+          if (!activeCategory) {
+            infoBox.innerHTML = defaultInfoContent;
+            infoBox.style.display = 'block';
+            infoBox.classList.add('default-list-mode');
+          }
         } else {
           mapContainer.style.opacity = '0';
           setTimeout(() => {
@@ -322,10 +744,36 @@
 
           btnMapToggle.src = 'switch-off.png';
           statusLight.src = 'light-off.png';
+
+          document.querySelectorAll('.category-toggle').forEach(btn => {
+            btn.src = "button-off.png";
+            btn.dataset.state = "off";
+          });
+
+          document.querySelectorAll('.layer-toggle').forEach(btn => {
+            btn.src = "layerbutton-off.png";
+            btn.dataset.state = "off";
+          });
+
+          Object.values(toggleableLayers).forEach(layer => {
+            if (map.hasLayer(layer)) {
+              map.removeLayer(layer);
+            }
+          });
+
+          document.querySelectorAll('.overlay-category').forEach(div => div.style.display = 'none');
+          document.getElementById('dummy-fillers').style.display = 'block';
+
+          const infoBox = document.getElementById('category-info-box');
+          infoBox.innerHTML = '';
+          infoBox.style.display = 'none';
+
+          activeCategory = null;
         }
 
         mapVisible = !mapVisible;
       });
+      
     });
 
     let markerLayer = null;
@@ -356,7 +804,7 @@
       const matches = standard.match(/-?\d+(\.\d+)?/g);
 
       if (!matches || matches.length < 2) {
-        alert('Invalid coordinate format (US-style).');
+        alert('Invalid coordinate format.');
         return null;
       }
 
@@ -389,8 +837,14 @@
       markerLayer = L.marker([lat, lng], { icon: divIcon }).addTo(map);
       map.setView([lat, lng], map.getZoom());
     }
-    
-    
+
+    document.getElementById('coord-full').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        gotoCoord();
+      }
+    });
+
   </script>
+<img src="gapfix.png" id="gap-fix-overlay" />
 </body>
 </html>
