@@ -644,7 +644,9 @@
 
 
       map.invalidateSize();
-      map.fitBounds(imageBounds); // <-- Proper map zoom on show
+      setMinZoomToFitViewport(100);
+      const startZoom = map.getMinZoom() + 0.3;
+      map.setView([2048, 2048], startZoom);
 
       const categoryButtons = {
         'btn-cat-zones': 'cat-zones',
