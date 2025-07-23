@@ -1243,7 +1243,7 @@
         if (curvedPoints.length > 1) {
           const prev = curvedPoints[curvedPoints.length - 2];
           const pixelDist = map.distance(prev, latlng);
-          const meters = pixelDist * 9.235; // ✅ correct conversion factor
+          const meters = pixelDist * 3.11084; // ✅ correct conversion factor
           customDistance += meters;
 
           if (customDistance >= 1000) {
@@ -1282,7 +1282,7 @@
 
             if (curvedPoints.length > 0) {
               const prev = curvedPoints[curvedPoints.length - 1];
-              const dist = map.distance(prev, removed) * 9.235;
+              const dist = map.distance(prev, removed) * 3.11084;
               customDistance -= dist;
 
               if (customDistance >= 1000) {
