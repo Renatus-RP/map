@@ -1423,8 +1423,10 @@
     document.getElementById('coord-full').addEventListener('keydown', function (e) {
       if (e.key === 'Enter') {
         gotoCoord();
+        this.value = '';
       }
     });
+
     goreOverlay = document.createElement('img');
     goreOverlay.src = 'map-gore.png';
     goreOverlay.style.position = 'fixed';
