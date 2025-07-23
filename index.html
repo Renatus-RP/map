@@ -1186,7 +1186,7 @@
         customDistance = 0;
         curvedPoints = [];
         smoothCurveLayer = null;
-        measureDisplay.innerText = "0 m";
+        measureDisplay.innerText = "Click to measure";
         measureDisplay.style.display = "block";
       }
 
@@ -1282,11 +1282,28 @@
 
             if (curvedPoints.length > 0) {
               const prev = curvedPoints[curvedPoints.length - 1];
-              const dist = map.distance(prev, removed);
+              const dist = map.distance(prev, removed) * 9.235;
               customDistance -= dist;
-              measureDisplay.innerText = `${customDistance.toFixed(1)} m`;
+
+              if (customDistance >= 1000) {
+                measureDisplay.innerText = `${(customDistance / 1000).toFixed(2)} km`;
+              } else {
+                measureDisplay.innerText = `${customDistance.toFixed(1)} m`;
+              }
             } else {
-              measureDisplay.innerText = `0 m`;
+              measureDisplay.innerText = `Click to measure`;
+            }
+            if (curvedPoints.length === 0) {
+              measureDisplay.innerText = `Click to measure`;
+
+              if (startMarker) {
+                map.removeLayer(startMarker);
+                startMarker = null;
+              }
+              if (endMarker) {
+                map.removeLayer(endMarker);
+                endMarker = null;
+              }
             }
             updateEndpointMarkers();
           }
