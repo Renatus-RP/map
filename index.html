@@ -318,7 +318,7 @@
     .clear {
       height: 10dvh;
       width: auto;
-      opacity: 1 !important;
+      opacity: 0.8 !important;
     }
 
     .pulse-marker::after {
@@ -461,7 +461,7 @@
       <img src="modebutton-off.png" id="btn-contrast-mode" class="map-toggle-btn mode-toggle" data-state="off" style="top: 15%; right: 8%;" draggable="false"/>
       <img src="modebutton-off.png" id="btn-base1" class="map-toggle-btn mode-toggle" data-state="off" style="top: 15%; right: 11%;" draggable="false"/>
       <img src="measure-off.png" id="btn-measure" class="map-toggle-btn measure-toggle" data-state="off" style="top: 43%;  left: 90.22%;" draggable="false"/>
-      <img src="btn-clear.png" id="btn-clear-coords" class="map-toggle-btn clear" style="top: 31.8%; left: 90.22%; width: 5dvh; height: auto;" draggable="false"/>
+      <img src="btn-clear.png" id="btn-clear-coords" class="map-toggle-btn clear" style="top: 31.68%; left: 89%; width: 8dvh; height: auto;" draggable="false"/>
       <div id="coord-input" style="display: none;">
         <input type="text" id="coord-full" placeholder="Paste coords" />
       </div>
@@ -1191,6 +1191,13 @@
       }
 
       function clearCoordPath() {
+        pressButtonImage(
+          document.getElementById('btn-clear-coords'),
+          'btn-clear-in.png', // <- you need to make this image
+          'btn-clear.png',
+          120
+        );
+
         coordPathPoints = [];
         coordLayerGroup.clearLayers();
         coordPathLayer = null;
