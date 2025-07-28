@@ -369,6 +369,12 @@
       z-index: 9999;
     }
 
+    .mode-light {
+      width: 2.2dvh;
+      height: 2.2dvh;
+      pointer-events: none;
+      z-index: 9999;
+    }
     .measure-toggle {
       width: 16dvh;
       height: auto;
@@ -520,19 +526,19 @@
 
       <!-- Grid -->
       <img src="modebutton-off.png" id="btn-grid" class="map-toggle-btn mode-toggle" data-state="off" style="top: 18.8%; left: 11.8%;" draggable="false"/>
-      <img src="indicator-off.png" id="light-grid" class="status-light category-light" style="top: 16.5%; left: 12.1%;" draggable="false"/>
+      <img src="indicator-off.png" id="light-grid" class="status-light mode-light" style="top: 16.5%; left: 12.1%;" draggable="false"/>
 
       <!-- Topography -->
       <img src="modebutton-off.png" id="btn-topo-mode" class="map-toggle-btn mode-toggle" data-state="off" style="top: 18.8%; left: 8.8%;" draggable="false"/>
-      <img src="indicator-off.png" id="light-topo" class="status-light category-light" style="top: 16.5%; left: 9.1%;" draggable="false"/>
+      <img src="indicator-off.png" id="light-topo" class="status-light mode-light" style="top: 16.5%; left: 9.1%;" draggable="false"/>
 
       <!-- Contrast -->
       <img src="modebutton-off.png" id="btn-contrast-mode" class="map-toggle-btn mode-toggle" data-state="off" style="top: 18.8%; left:5.8%;" draggable="false"/>
-      <img src="indicator-off.png" id="light-contrast" class="status-light category-light" style="top: 16.5%; left: 6.1%;" draggable="false"/>
+      <img src="indicator-off.png" id="light-contrast" class="status-light mode-light" style="top: 16.5%; left: 6.1%;" draggable="false"/>
 
       <!-- Base 1 -->
       <img src="modebutton-off.png" id="btn-base1" class="map-toggle-btn mode-toggle" data-state="off" style="top: 18.8%; left: 2.8%;" draggable="false"/>
-      <img src="indicator-off.png" id="light-base1" class="status-light category-light" style="top: 16.5%; left: 3.1%;" draggable="false"/>
+      <img src="indicator-off.png" id="light-base1" class="status-light mode-light" style="top: 16.5%; left: 3.1%;" draggable="false"/>
 
       <img src="measure-off.png" id="btn-measure" class="map-toggle-btn measure-toggle" data-state="off" style="top: 32.8%;  left: 86.42%;" draggable="false"/>
       <div id="coord-input" style="display: none;">
@@ -1259,6 +1265,10 @@
           statusLight.src = 'light-off.png';
 
           document.querySelectorAll('.category-light').forEach(light => {
+            light.src = "indicator-off.png";
+          });
+
+          document.querySelectorAll('.mode-light').forEach(light => {
             light.src = "indicator-off.png";
           });
 
