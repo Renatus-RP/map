@@ -30,7 +30,7 @@
 
     #category-info-box {
       position: absolute;
-      top: 11%;
+      top: 27%;
       left: 2.2%;
       width: 16dvh;
       background: rgba(0, 0, 0, 0);
@@ -50,13 +50,18 @@
       font-size: 1.7dvh;
       font-weight: normal;
       text-transform: none;
-      text-align: left;
       margin-top: 1.6dvh;
+      text-align: left; /* default */
     }
 
-    #category-info-box.default-list-mode span {
-      margin-bottom: 0dvh;
-      margin-top: 1.6dvh;
+    #category-info-box.align-left span {
+      text-align: left;
+      padding-left: 0.6dvh;
+    }
+
+    #category-info-box.align-right span {
+      text-align: right;
+      padding-right: 0.6dvh;
     }
 
     #control-panel-wrapper {
@@ -173,7 +178,7 @@
 
     #coord-input {
       position: absolute;
-      top: 28.92%;
+      top: 43.1%;
       left: 91.7%;
       transform: translate(-50%, -50%);
       background: rgba(0, 0, 0, 0);
@@ -344,8 +349,15 @@
       position: absolute;
     }
 
+    .numpad-btn {
+      width: 5.2dvh;
+      height: auto;
+      cursor: pointer;
+      opacity: 1 !important;
+    }
+
     .mode-toggle {
-      height: 10dvh;
+      height: 5dvh;
       width: auto;
       opacity: 1 !important;
     }
@@ -358,8 +370,8 @@
     }
 
     .measure-toggle {
-      height: 5dvh;
-      width: auto;
+      width: 16dvh;
+      height: auto;
       opacity: 1 !important;
     }
     .leaflet-control-measure .leaflet-control-measure-toggle,
@@ -376,98 +388,159 @@
         opacity: 0;
       }
     }
+    #discord-button {
+      position: fixed;
+      bottom: 2vh;
+      right: 2vh;
+      z-index: 999999;
+      display: block;
+      height: 4vh !important;
+      width: auto;
+      transition: transform 0.2s ease;
+      pointer-events: auto;
+    }
+    #discord-button img {
+      height: 4vh;
+      width: auto;
+      display: block;
+    }
+    #discord-button:hover {
+      transform: scale(1.08);
+    }
   </style>
 </head>
 <body>
   <div id="control-panel-wrapper">
     <img id="control-panel-base" src="control-panel-base.png" alt="" />
     <div id="overlay-buttons">
-      <img src="switch-on.png" id="btn-map-on" class="map-toggle-btn onoff-toggle" style="top: 82.5%; left: 85.42%;" draggable="false"/>
-      <img src="switch-off.png" id="btn-map-off" class="map-toggle-btn onoff-toggle" style="top: 82.5%; left: 91.52%;" draggable="false"/>
+      <img src="switch-on.png" id="btn-map-on" class="map-toggle-btn onoff-toggle" style="top: 83.5%; left: 85.42%;" draggable="false"/>
+      <img src="switch-off.png" id="btn-map-off" class="map-toggle-btn onoff-toggle" style="top: 83.5%; left: 91.52%;" draggable="false"/>
       <img src="light-off.png" id="status-light" class="status-light" />
       <!-- Category: Zones -->
-      <img src="button-a.png" id="btn-cat-zones" class="map-toggle-btn category-toggle" data-category="cat-zones" data-state="off" style="top: 41%; left: 3%; opacity: 1;" draggable="false" />
-      <img src="indicator-off.png" id="light-cat-zones" class="status-light category-light" style="top: 41.2%; left: 6.1%;" draggable="false" />
+      <img src="button-a.png" id="btn-cat-zones" class="map-toggle-btn category-toggle" data-category="cat-zones" data-state="off" style="top: 55.1%; left: 3%; opacity: 1;" draggable="false" />
+      <img src="indicator-off.png" id="light-cat-zones" class="status-light category-light" style="top: 55.9%; left: 6.1%;" draggable="false" />
 
       <!-- Category: Environment -->
-      <img src="button-b.png" id="btn-cat-env" class="map-toggle-btn category-toggle" data-category="cat-env" data-state="off" style="top: 45%; left: 3%; opacity: 1;" draggable="false" />
-      <img src="indicator-off.png" id="light-cat-env" class="status-light category-light" style="top: 45.2%; left: 6.1%;" draggable="false" />
+      <img src="button-b.png" id="btn-cat-env" class="map-toggle-btn category-toggle" data-category="cat-env" data-state="off" style="top: 59.1%; left: 3%; opacity: 1;" draggable="false" />
+      <img src="indicator-off.png" id="light-cat-env" class="status-light category-light" style="top: 59.9%; left: 6.1%;" draggable="false" />
 
       <!-- Category: Manmade -->
-      <img src="button-c.png" id="btn-cat-manmade" class="map-toggle-btn category-toggle" data-category="cat-manmade" data-state="off" style="top: 49%; left: 3%; opacity: 1;" draggable="false" />
-      <img src="indicator-off.png" id="light-cat-manmade" class="status-light category-light" style="top: 49.2%; left: 6.1%;" draggable="false" />
+      <img src="button-c.png" id="btn-cat-manmade" class="map-toggle-btn category-toggle" data-category="cat-manmade" data-state="off" style="top: 63.1%; left: 3%; opacity: 1;" draggable="false" />
+      <img src="indicator-off.png" id="light-cat-manmade" class="status-light category-light" style="top: 63.9%; left: 6.1%;" draggable="false" />
 
       <!-- Category: Traversal -->
-      <img src="button-d.png" id="btn-cat-traversal" class="map-toggle-btn category-toggle" data-category="cat-traversal" data-state="off" style="top: 53%; left: 3%; opacity: 1;" draggable="false" />
-      <img src="indicator-off.png" id="light-cat-traversal" class="status-light category-light" style="top: 53.2%; left: 6.1%;" draggable="false" />
+      <img src="button-d.png" id="btn-cat-traversal" class="map-toggle-btn category-toggle" data-category="cat-traversal" data-state="off" style="top: 67.1%; left: 3%; opacity: 1;" draggable="false" />
+      <img src="indicator-off.png" id="light-cat-traversal" class="status-light category-light" style="top: 67.9%; left: 6.1%;" draggable="false" />
 
       <!-- Category: Labels -->
-      <img src="button-e.png" id="btn-cat-labels" class="map-toggle-btn category-toggle" data-category="cat-labels" data-state="off" style="top: 57%; left: 3%; opacity: 1;" draggable="false" />
-      <img src="indicator-off.png" id="light-cat-labels" class="status-light category-light" style="top: 57.2%; left: 6.1%;" draggable="false" />
+      <img src="button-e.png" id="btn-cat-labels" class="map-toggle-btn category-toggle" data-category="cat-labels" data-state="off" style="top: 71.1%; left: 3%; opacity: 1;" draggable="false" />
+      <img src="indicator-off.png" id="light-cat-labels" class="status-light category-light" style="top: 71.9%; left: 6.1%;" draggable="false" />
 
       <img src="tickletoggle-off.png" id="btn-tickletoggle" class="map-toggle-btn" data-state="off" style="top: 1.8%;  right: 1.5%; z-index: 9999; opacity: 0.75;" draggable="false" />
-      <div id="tickle-counter" style="position: absolute; top: 32.5%; left: 9.5%;  width: 6dvh; height: auto; color: rgba(171, 255, 171, 0.548); font-family: 'Courier New', monospace; font-size: 1.5dvh; text-align: right; white-space: nowrap; overflow: hidden; pointer-events: none; z-index: 9999; display: none;">0</div>
-
+      <div id="tickle-counter" style="position: absolute; top: 49%; left: 9.5%;  width: 6dvh; height: auto; color: rgba(171, 255, 171, 0.548); font-family: 'Courier New', monospace; font-size: 1.5dvh; text-align: right; white-space: nowrap; overflow: hidden; pointer-events: none; z-index: 9999; display: none;">0</div>
 
       <div id="cat-zones" class="overlay-category" style="display:none;">
-        <img src="layerbutton-off.png" id="btn-patrol" class="map-toggle-btn layer-toggle" data-state="off" style="top: 42%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" id="btn-migration" class="map-toggle-btn layer-toggle" data-state="off" style="top: 46%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" id="btn-sanctuary" class="map-toggle-btn layer-toggle" data-state="off" style="top: 50%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 54%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 58%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" id="btn-patrol" class="map-toggle-btn layer-toggle" data-state="off" style="top: 55.8%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" id="btn-migration" class="map-toggle-btn layer-toggle" data-state="off" style="top: 59.8%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" id="btn-sanctuary" class="map-toggle-btn layer-toggle" data-state="off" style="top: 63.8%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 67.8%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 71.8%; left: 10%;" draggable="false"/>
       </div>
 
       <div id="cat-env" class="overlay-category" style="display:none;">
-        <img src="layerbutton-off.png" id="btn-water" class="map-toggle-btn layer-toggle" data-state="off" style="top: 42%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" id="btn-salt" class="map-toggle-btn layer-toggle" data-state="off" style="top: 46%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" id="btn-mud" class="map-toggle-btn layer-toggle" data-state="off" style="top: 50%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 54%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 58%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" id="btn-water" class="map-toggle-btn layer-toggle" data-state="off" style="top: 55.8%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" id="btn-salt" class="map-toggle-btn layer-toggle" data-state="off" style="top: 59.8%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" id="btn-mud" class="map-toggle-btn layer-toggle" data-state="off" style="top: 63.8%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 67.8%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 71.8%; left: 10%;" draggable="false"/>
       </div>
 
       <div id="cat-manmade" class="overlay-category" style="display:none;">
-        <img src="layerbutton-off.png" id="btn-road" class="map-toggle-btn layer-toggle" data-state="off" style="top: 42%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" id="btn-structure" class="map-toggle-btn layer-toggle" data-state="off" style="top: 46%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 50%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 54%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 58%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" id="btn-road" class="map-toggle-btn layer-toggle" data-state="off" style="top: 55.8%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" id="btn-structure" class="map-toggle-btn layer-toggle" data-state="off" style="top: 59.8%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 63.8%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 67.8%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 71.8%; left: 10%;" draggable="false"/>
       </div>
 
       <div id="cat-traversal" class="overlay-category" style="display:none;">
-        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 42%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 46%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 50%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 54%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 58%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 55.8%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 59.8%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 63.8%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 67.8%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 71.8%; left: 10%;" draggable="false"/>
       </div>
 
       <div id="cat-labels" class="overlay-category" style="display:none;">
-        <img src="layerbutton-off.png" id="btn-lakes" class="map-toggle-btn layer-toggle" data-state="off" style="top: 42%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" id="btn-rivers" class="map-toggle-btn layer-toggle" data-state="off" style="top: 46%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" id="btn-outposts" class="map-toggle-btn layer-toggle" data-state="off" style="top: 50%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" id="btn-landmarks" class="map-toggle-btn layer-toggle" data-state="off" style="top: 54%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 58%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" id="btn-lakes" class="map-toggle-btn layer-toggle" data-state="off" style="top: 55.8%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" id="btn-rivers" class="map-toggle-btn layer-toggle" data-state="off" style="top: 59.8%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" id="btn-outposts" class="map-toggle-btn layer-toggle" data-state="off" style="top: 63.8%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" id="btn-landmarks" class="map-toggle-btn layer-toggle" data-state="off" style="top: 67.8%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 71.8%; left: 10%;" draggable="false"/>
       </div>
 
       <div id="dummy-fillers">
-        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 42%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 46%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 50%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 54%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 58%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 55.8%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 59.8%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 63.8%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 67.8%; left: 10%;" draggable="false"/>
+        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 71.8%; left: 10%;" draggable="false"/>
       </div>
-      <img src="modebutton-off.png" id="btn-grid" class="map-toggle-btn mode-toggle" data-state="off" style="top: 15%; right: 2%;" draggable="false"/>
-      <img src="modebutton-off.png" id="btn-topo-mode" class="map-toggle-btn mode-toggle" data-state="off" style="top: 15%; right: 5%;" draggable="false"/>
-      <img src="modebutton-off.png" id="btn-contrast-mode" class="map-toggle-btn mode-toggle" data-state="off" style="top: 15%; right: 8%;" draggable="false"/>
-      <img src="modebutton-off.png" id="btn-base1" class="map-toggle-btn mode-toggle" data-state="off" style="top: 15%; right: 11%;" draggable="false"/>
-      <img src="measure-off.png" id="btn-measure" class="map-toggle-btn measure-toggle" data-state="off" style="top: 43%;  left: 90.22%;" draggable="false"/>
-      <img src="btn-clear.png" id="btn-clear-coords" class="map-toggle-btn clear" style="top: 31.68%; left: 89%; width: 8dvh; height: auto;" draggable="false"/>
+
+      <div id="numpad-container" style="
+        position: absolute;
+        top: 60.8%;
+        left: 91.7%;
+        transform: translate(-50%, -50%);
+        z-index: 9999;
+        display: flex;
+        flex-wrap: wrap;
+        width: 18dvh;
+        height: auto;
+        justify-content: center;
+        gap: 0.4dvh;
+        pointer-events: auto;
+      ">
+        <!-- Number buttons -->
+        <img src="button-1.png" id="btn-numpad-1" class="numpad-btn" data-num="1" draggable="false" />
+        <img src="button-2.png" id="btn-numpad-2" class="numpad-btn" data-num="2" draggable="false" />
+        <img src="button-3.png" id="btn-numpad-3" class="numpad-btn" data-num="3" draggable="false" />
+        <img src="button-4.png" id="btn-numpad-4" class="numpad-btn" data-num="4" draggable="false" />
+        <img src="button-5.png" id="btn-numpad-5" class="numpad-btn" data-num="5" draggable="false" />
+        <img src="button-6.png" id="btn-numpad-6" class="numpad-btn" data-num="6" draggable="false" />
+        <img src="button-7.png" id="btn-numpad-7" class="numpad-btn" data-num="7" draggable="false" />
+        <img src="button-8.png" id="btn-numpad-8" class="numpad-btn" data-num="8" draggable="false" />
+        <img src="button-9.png" id="btn-numpad-9" class="numpad-btn" data-num="9" draggable="false" />
+        <!-- Clear, 0, Confirm -->
+        <img src="button-clear.png" id="btn-numpad-clear" class="numpad-btn" draggable="false" />
+        <img src="button-0.png" id="btn-numpad-0" class="numpad-btn" data-num="0" draggable="false" />
+        <img src="button-confirm.png" id="btn-numpad-confirm" class="numpad-btn" draggable="false" />
+        <img src="button-space.png" id="btn-numpad-space" class="numpad-btn" draggable="false" style="width: 16dvh; height: auto; margin-top: 0.6dvh;" />
+      </div>
+
+      <!-- Grid -->
+      <img src="modebutton-off.png" id="btn-grid" class="map-toggle-btn mode-toggle" data-state="off" style="top: 18.8%; left: 11.8%;" draggable="false"/>
+      <img src="indicator-off.png" id="light-grid" class="status-light category-light" style="top: 16.5%; left: 12.1%;" draggable="false"/>
+
+      <!-- Topography -->
+      <img src="modebutton-off.png" id="btn-topo-mode" class="map-toggle-btn mode-toggle" data-state="off" style="top: 18.8%; left: 8.8%;" draggable="false"/>
+      <img src="indicator-off.png" id="light-topo" class="status-light category-light" style="top: 16.5%; left: 9.1%;" draggable="false"/>
+
+      <!-- Contrast -->
+      <img src="modebutton-off.png" id="btn-contrast-mode" class="map-toggle-btn mode-toggle" data-state="off" style="top: 18.8%; left:5.8%;" draggable="false"/>
+      <img src="indicator-off.png" id="light-contrast" class="status-light category-light" style="top: 16.5%; left: 6.1%;" draggable="false"/>
+
+      <!-- Base 1 -->
+      <img src="modebutton-off.png" id="btn-base1" class="map-toggle-btn mode-toggle" data-state="off" style="top: 18.8%; left: 2.8%;" draggable="false"/>
+      <img src="indicator-off.png" id="light-base1" class="status-light category-light" style="top: 16.5%; left: 3.1%;" draggable="false"/>
+
+      <img src="measure-off.png" id="btn-measure" class="map-toggle-btn measure-toggle" data-state="off" style="top: 32.8%;  left: 86.42%;" draggable="false"/>
       <div id="coord-input" style="display: none;">
         <input type="text" id="coord-full" placeholder="Paste coords" />
       </div>
       <div id="measure-display" style="
         position: absolute;
-        top: 38.35%;
+        top: 27.2%;
         right: 2.2%;
         width: 15.5dvh;
         color: rgba(171, 255, 171, 0.74);
@@ -524,7 +597,11 @@
         button.src = defaultSrc;
       }, delay);
     }
-
+    function setInfoBoxAlignment(align = "left") {
+      const infoBox = document.getElementById('category-info-box');
+      infoBox.classList.remove('align-left', 'align-right');
+      infoBox.classList.add(`align-${align}`);
+    }
     function setMinZoomToFitViewport(maxHeightInDvh = 100) {
       const mapHeightInPixels = window.innerHeight * (maxHeightInDvh / 100);
       const mapWidthInPixels = map.getContainer().clientWidth;
@@ -738,6 +815,52 @@
       btnGrid = document.getElementById('btn-grid');
       gridLayerGroup = L.layerGroup();
 
+      const coordInputField = document.getElementById('coord-full');
+      const clickSound = document.getElementById('click-sound');
+
+      // Press animation helper
+      function pressBtn(btn, delay = 100) {
+        const src = btn.src.replace('.png', '');
+        pressButtonImage(btn, `${src}-in.png`, `${src}.png`, delay);
+      }
+
+      // Number input buttons
+      document.querySelectorAll('.numpad-btn[data-num]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          clickSound.currentTime = 0;
+          clickSound.play();
+          pressBtn(btn);
+          coordInputField.value += btn.dataset.num;
+        });
+      });
+
+      const btnSpace = document.getElementById('btn-numpad-space');
+      btnSpace.addEventListener('click', () => {
+        clickSound.currentTime = 0;
+        clickSound.play();
+        pressBtn(btnSpace);
+        coordInputField.value += ' ';
+      });
+
+      // Confirm button = ENTER
+      const btnConfirm = document.getElementById('btn-numpad-confirm');
+      btnConfirm.addEventListener('click', (e) => {
+        clickSound.currentTime = 0;
+        clickSound.play();
+        pressBtn(btnConfirm);
+        gotoCoord();
+        coordInputField.value = '';
+      });
+
+      // Clear button = same as btn-clear-coords
+      const btnClear = document.getElementById('btn-numpad-clear');
+      btnClear.addEventListener('click', (e) => {
+        clickSound.currentTime = 0;
+        clickSound.play();
+        pressBtn(btnClear);
+        clearCoordPath();
+      });
+
       const cellSize = 4096 / 24;
       const greek = [
         "α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι", "κ", "λ", "μ",
@@ -829,11 +952,12 @@
 
       btnGrid.addEventListener('click', () => {
         const isOn = btnGrid.dataset.state === "on";
+        const lightGrid = document.getElementById('light-grid');
         const clickSound = document.getElementById('click-sound');
         clickSound.currentTime = 0;
         clickSound.play();
 
-        if (!mapVisible) return; // ✅ Don't toggle grid if TV is off
+
 
         if (!isOn) {
           gridLayerGroup.addTo(map);
@@ -842,32 +966,37 @@
           floatLabelContainer.style.display = 'block';
           map.on('move zoom', updateFloatingLabels);
           updateFloatingLabels();
+          if (mapVisible && lightGrid) lightGrid.src = "indicator-on.png";
         } else {
           map.removeLayer(gridLayerGroup);
           btnGrid.src = "modebutton-off.png";
           btnGrid.dataset.state = "off";
           floatLabelContainer.style.display = 'none';
           map.off('move zoom', updateFloatingLabels);
+          if (mapVisible && lightGrid) lightGrid.src = "indicator-off.png";
         }
       });
 
       const btnTopoMode = document.getElementById('btn-topo-mode');
       btnTopoMode.addEventListener('click', () => {
+        const lightGrid = document.getElementById('light-topo');
         const isOn = btnTopoMode.dataset.state === "on";
         const clickSound = document.getElementById('click-sound');
         clickSound.currentTime = 0;
         clickSound.play();
 
-        if (!mapVisible) return;
+
 
         if (!isOn) {
           topographyLayer.addTo(map);
           btnTopoMode.src = "modebutton-on.png";
           btnTopoMode.dataset.state = "on";
+          if (mapVisible && lightGrid) lightGrid.src = "indicator-on.png";
         } else {
           map.removeLayer(topographyLayer);
           btnTopoMode.src = "modebutton-off.png";
           btnTopoMode.dataset.state = "off";
+          if (mapVisible && lightGrid) lightGrid.src = "indicator-off.png";
         }
       });
 
@@ -878,48 +1007,55 @@
         clickSound.currentTime = 0;
         clickSound.play();
 
+        // Always play the press animation
+        pressButtonImage(btnMeasure, "measure-on.png", "measure-off.png", 120);
+
+        // Do NOT toggle the measure mode if map is off
         if (!mapVisible) return;
 
         if (!isOn) {
           startCustomMeasuring();
-          btnMeasure.src = "measure-on.png";
           btnMeasure.dataset.state = "on";
         } else {
           stopCustomMeasuring();
-          btnMeasure.src = "measure-off.png";
           btnMeasure.dataset.state = "off";
         }
       });
 
+
       const btnBase1 = document.getElementById('btn-base1');
       btnBase1.addEventListener('click', () => {
+        const lightGrid = document.getElementById('light-base1');
         const isOn = btnBase1.dataset.state === "on";
         const clickSound = document.getElementById('click-sound');
         clickSound.currentTime = 0;
         clickSound.play();
 
-        if (!mapVisible) return;
+
 
         if (!isOn) {
           base1Layer.addTo(map);
           btnBase1.src = "modebutton-on.png";
           btnBase1.dataset.state = "on";
+          if (mapVisible && lightGrid) lightGrid.src = "indicator-on.png";
         } else {
           map.removeLayer(base1Layer);
           btnBase1.src = "modebutton-off.png";
           btnBase1.dataset.state = "off";
+          if (mapVisible && lightGrid) lightGrid.src = "indicator-off.png";
         }
       });
 
       const btnContrastMode = document.getElementById('btn-contrast-mode');
 
       btnContrastMode.addEventListener('click', () => {
+        const lightGrid = document.getElementById('light-contrast');
         const isOn = btnContrastMode.dataset.state === "on";
         const clickSound = document.getElementById('click-sound');
         clickSound.currentTime = 0;
         clickSound.play();
 
-        if (!mapVisible) return;
+  
 
         const mapContainer = document.getElementById('map-container');
 
@@ -927,10 +1063,12 @@
           mapContainer.classList.add('grayscale');
           btnContrastMode.src = "modebutton-on.png";
           btnContrastMode.dataset.state = "on";
+          if (mapVisible && lightGrid) lightGrid.src = "indicator-on.png";
         } else {
           mapContainer.classList.remove('grayscale');
           btnContrastMode.src = "modebutton-off.png";
           btnContrastMode.dataset.state = "off";
+          if (mapVisible && lightGrid) lightGrid.src = "indicator-off.png";
         }
       });
 
@@ -956,11 +1094,11 @@
       };
 
       const categoryDescriptions = {
-        'cat-zones': { name: 'ZONES', layers: ['1-Patrol', '2-Migration', '2-Sanctuary'] },
-        'cat-env': { name: 'ENVIRONMENT', layers: ['1-Water', '2-Salt', '3-Mud'] },
-        'cat-manmade': { name: 'MANMADE', layers: ['1-Road', '2-Structure'] },
-        'cat-traversal': { name: 'TRAVERSAL', layers: ['1-Trails', '2-Slipstreams', '3-Thermals'] },
-        'cat-labels': { name: 'LABELS', layers: ['1-Lakes', '2-Rivers', '3-Outposts', '4-Landmarks'] }
+        'cat-zones': { name: 'ZONES', layers: ['Patrol-1', 'Migration-2', 'Sanctuary-3'] },
+        'cat-env': { name: 'ENVIRONMENT', layers: ['Water-1', 'Salt-2', 'Mud-3'] },
+        'cat-manmade': { name: 'MANMADE', layers: ['Road-1', 'Structure-2'] },
+        'cat-traversal': { name: 'TRAVERSAL', layers: ['Trails-1', 'Slipstreams-2', 'Thermals-3'] },
+        'cat-labels': { name: 'LABELS', layers: ['Lakes-1', 'Rivers-2', 'Outposts-3', 'Landmarks-4'] }
       };
 
       const defaultInfoContent = `
@@ -1007,6 +1145,7 @@
             infoBox.innerHTML = defaultInfoContent;
             infoBox.style.display = 'block';
             infoBox.classList.add('default-list-mode');
+            setInfoBoxAlignment("left");
           } else {
             document.querySelectorAll('.category-toggle').forEach(otherBtn => {
               otherBtn.dataset.state = "off";
@@ -1027,6 +1166,7 @@
               infoBox.innerHTML = `<strong>${desc.name}</strong>` + desc.layers.map(layer => `<span>${layer}</span>`).join('');
               infoBox.style.display = 'block';
               infoBox.classList.remove('default-list-mode');
+              setInfoBoxAlignment("right");
             }
           }
         });
@@ -1060,11 +1200,32 @@
         if (turnOn) {
           document.getElementById('coord-input').style.display = 'block';
           mapContainer.style.display = 'block';
+          coordInputField.value = '';
           setTimeout(() => {
             mapContainer.style.opacity = '1';
             map.invalidateSize();
             setMinZoomToFitViewport(100);
           }, 10);
+
+          if (btnGrid.dataset.state === "on") {
+            gridLayerGroup.addTo(map);
+            document.getElementById('light-grid').src = "indicator-on.png";
+          }
+
+          if (btnTopoMode.dataset.state === "on") {
+            topographyLayer.addTo(map);
+            document.getElementById('light-topo').src = "indicator-on.png";
+          }
+
+          if (btnBase1.dataset.state === "on") {
+            base1Layer.addTo(map);
+            document.getElementById('light-base1').src = "indicator-on.png";
+          }
+
+          if (btnContrastMode.dataset.state === "on") {
+            mapContainer.classList.add('grayscale');
+            document.getElementById('light-contrast').src = "indicator-on.png";
+          }
 
           soundOn.currentTime = 0;
           soundOn.play();
@@ -1074,6 +1235,8 @@
           const infoBox = document.getElementById('category-info-box');
           if (!activeCategory) {
             infoBox.innerHTML = defaultInfoContent;
+            infoBox.classList.add('default-list-mode');
+            setInfoBoxAlignment("left");
             infoBox.style.display = 'block';
             infoBox.classList.add('default-list-mode');
           }
@@ -1094,8 +1257,6 @@
           soundOff.play();
           stopCustomMeasuring();
           statusLight.src = 'light-off.png';
-          btnMeasure.src = "measure-off.png";
-          btnMeasure.dataset.state = "off";
 
           document.querySelectorAll('.category-light').forEach(light => {
             light.src = "indicator-off.png";
@@ -1191,13 +1352,6 @@
       }
 
       function clearCoordPath() {
-        pressButtonImage(
-          document.getElementById('btn-clear-coords'),
-          'btn-clear-in.png', // <- you need to make this image
-          'btn-clear.png',
-          120
-        );
-
         coordPathPoints = [];
         coordLayerGroup.clearLayers();
         coordPathLayer = null;
@@ -1317,13 +1471,7 @@
         }
       });
 
-      const btnClearCoords = document.getElementById('btn-clear-coords');
-      btnClearCoords.addEventListener('click', () => {
-        const clickSound = document.getElementById('click-sound');
-        clickSound.currentTime = 0;
-        clickSound.play();
-        clearCoordPath();
-      });
+
 
     });
 
@@ -1529,5 +1677,8 @@
   transition: opacity 0.6s ease-in-out;
   display: none;
 " />
+  <div id="discord-button" onclick="window.open('https://discord.gg/RenatusRP', '_blank')">
+    <img src="discord-button.png" alt="Join our Discord">
+  </div>
 </body>
 </html>
