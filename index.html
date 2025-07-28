@@ -1534,8 +1534,8 @@
       const parsed = parsePlayerCoord(input);
       if (!parsed) return;
 
-      const pxX = 0.00002517 * parsed.x + 0.00331425 * parsed.y + 1853.23;
-      const pxY = 0.00331419 * parsed.x + 0.00004456 * parsed.y + 1981.76;
+      const pxX = -0.0000020164 * parsed.x + 0.00329513 * parsed.y + 1840.72;
+      const pxY =  0.00329418 * parsed.x + 0.00002059 * parsed.y + 1976.96;
       const latlng = L.latLng(mapSize - pxY, pxX);
 
       if (coordPathPoints.length >= 1) {
