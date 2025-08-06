@@ -1493,10 +1493,9 @@
         const clickSound = document.getElementById('click-sound');
         const coordInputField = document.getElementById('coord-full');
 
-        // Ignore keypresses if map is not visible
+        if (document.activeElement === coordInputField) return;
         if (!mapVisible) return;
 
-        // Prevent scrolling on space
         if (e.key === ' ' && document.activeElement === document.body) {
           e.preventDefault();
         }
