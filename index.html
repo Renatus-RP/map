@@ -586,8 +586,8 @@
     let coordPathLayer = null;
     let coordStartMarker = null;
     let coordEndMarker = null;
-    const mapLabels = [
-    ];
+    const mapLabels = [];
+    const pressedLock = new Map();
 
     const map = L.map('map', {
       crs: L.CRS.Simple,
@@ -731,12 +731,16 @@
     }
 
     function pressButtonImage(button, pressedSrc, defaultSrc, delay = 150) {
+      if (pressedLock.get(button)) return; // Don't retrigger if already pressed
+
+      pressedLock.set(button, true);       // Lock this button
       button.src = pressedSrc;
       button.style.pointerEvents = 'none';
 
       setTimeout(() => {
         button.src = defaultSrc;
         button.style.pointerEvents = '';
+        pressedLock.set(button, false);    // Release lock
       }, delay);
     }
 
@@ -817,12 +821,15 @@
     let mapVisible = false;
     let tickleCount = 0;
     let measureControl = null;
+
+
     window.addEventListener('load', () => {
       btnGrid = document.getElementById('btn-grid');
       gridLayerGroup = L.layerGroup();
 
       const coordInputField = document.getElementById('coord-full');
       const clickSound = document.getElementById('click-sound');
+      
 
       // Press animation helper
       function pressBtn(btn, delay = 100) {
