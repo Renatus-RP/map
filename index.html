@@ -1482,6 +1482,68 @@
         }
       });
 
+      document.addEventListener('keydown', (e) => {
+        const clickSound = document.getElementById('click-sound');
+        const coordInputField = document.getElementById('coord-full');
+
+        // Ignore keypresses if map is not visible
+        if (!mapVisible) return;
+
+        // Prevent scrolling on space
+        if (e.key === ' ' && document.activeElement === document.body) {
+          e.preventDefault();
+        }
+
+        // Digits 0–9
+        if ((e.key >= '0' && e.key <= '9') || e.code.startsWith('Numpad')) {
+          const digit = e.key;
+
+          // Ensure it's only 0-9 from Numpad
+          if (digit >= '0' && digit <= '9') {
+            const btn = document.querySelector(`.numpad-btn[data-num="${digit}"]`);
+            if (btn) {
+              clickSound.currentTime = 0;
+              clickSound.play();
+              pressButtonImage(btn, btn.src.replace('.png', '-in.png'), btn.src, 150);
+              coordInputField.value += digit;
+            }
+          }
+        }
+
+        // Space key
+        if (e.key === ' ') {
+          const btn = document.getElementById('btn-numpad-space');
+          clickSound.currentTime = 0;
+          clickSound.play();
+          pressButtonImage(btn, btn.src.replace('.png', '-in.png'), btn.src, 150);
+          coordInputField.value += ' ';
+        }
+
+        // Enter key
+        if (e.key === 'Enter') {
+          const btn = document.getElementById('btn-numpad-confirm');
+          clickSound.currentTime = 0;
+          clickSound.play();
+          pressButtonImage(btn, btn.src.replace('.png', '-in.png'), btn.src, 150);
+          gotoCoord();
+          coordInputField.value = '';
+        }
+
+        // ESC = Clear
+        if (e.key === 'Escape') {
+          const btn = document.getElementById('btn-numpad-clear');
+          clickSound.currentTime = 0;
+          clickSound.play();
+          pressButtonImage(btn, btn.src.replace('.png', '-in.png'), btn.src, 150);
+          clearCoordPath();
+          coordInputField.value = '';
+        }
+
+        // Backspace = delete last character (no button trigger)
+        if (e.key === 'Backspace') {
+          coordInputField.value = coordInputField.value.slice(0, -1);
+        }
+      });
 
 
     });
