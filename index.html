@@ -1061,24 +1061,38 @@
 
       function updateFloatingLabels() {
         const size = map.getSize();
+        const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
 
-        // Greek Y-axis (float up/down)
+        const base = Math.min(size.x, size.y);
+        const inset = Math.round(clamp(base * 0.04, 15, 75)); // 4% of map, between 12–70px
+
+        const padX = inset;
+        const padY = inset;
+        const insetX = inset;
+        const insetY = inset;
+
         rowLabels.forEach(({ el, lat }) => {
-          const point = map.latLngToContainerPoint([lat, 0]);
-          const clampedX = Math.min(Math.max(50, point.x), size.x - 40);
-          el.style.left = (clampedX + 10) + "px";
-          el.style.top = (point.y - 8) + "px";
+          const p = map.latLngToContainerPoint([lat, 0]);
+          const halfH = (el.offsetHeight || 0) / 2;
+          const left = clamp(p.x + insetX, padX, size.x - padX);
+          const top  = clamp(p.y - halfH,  padY, size.y - padY);
+
+          el.style.left = left + 'px';
+          el.style.top  = top  + 'px';
         });
 
-        // Number X-axis (float left/right near top)
+        const north = map.getBounds().getNorth();
         colLabels.forEach(({ el, lng }) => {
-          const point = map.latLngToContainerPoint([map.getBounds().getNorth(), lng]);
-          const clampedY = Math.min(Math.max(50, point.y), size.y - 40);
-          el.style.left = (point.x - 8) + "px";
-          el.style.top = (clampedY + 10) + "px";
+          const p = map.latLngToContainerPoint([north, lng]);
+          const halfW = (el.offsetWidth || 0) / 2;
+
+          const left = clamp(p.x - halfW, padX, size.x - padX);
+          const top  = clamp(p.y + insetY, padY, size.y - padY);
+
+          el.style.left = left + 'px';
+          el.style.top  = top  + 'px';
         });
       }
-
 
 
       btnGrid.addEventListener('click', () => {
