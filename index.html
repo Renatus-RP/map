@@ -1071,8 +1071,9 @@
         const insetX = inset;
         const insetY = inset;
 
+        const west = map.getBounds().getWest();
         rowLabels.forEach(({ el, lat }) => {
-          const p = map.latLngToContainerPoint([lat, 0]);
+          const p = map.latLngToContainerPoint([lat, west]); // use west edge instead of lng=0
           const halfH = (el.offsetHeight || 0) / 2;
           const left = clamp(p.x + insetX, padX, size.x - padX);
           const top  = clamp(p.y - halfH,  padY, size.y - padY);
