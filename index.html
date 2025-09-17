@@ -229,8 +229,15 @@
       0%   { filter: hue-rotate(0deg); }
       100% { filter: hue-rotate(360deg); }
     }
-
-    #overlay-buttons {
+    @keyframes topoPulse {
+      0%   { opacity: 0.65; }
+      50%  { opacity: 0.30; }
+      100% { opacity: 0.65; }
+    }
+    .leaflet-topography-pulse {
+      animation: topoPulse 2.5s ease-in-out infinite;
+    }
+        #overlay-buttons {
       position: absolute;
       top: 0;
       left: 0;
@@ -829,6 +836,24 @@
       return createLabel(lat, lng, text);
     }
 
+    function enableTopoPulse() {
+      const el = topographyLayer.getElement();
+      if (el) {
+        el.classList.add('leaflet-topography-pulse');
+      } else {
+        // wait for the image element to exist/load
+        topographyLayer.once('load', () => {
+          const el2 = topographyLayer.getElement();
+          if (el2) el2.classList.add('leaflet-topography-pulse');
+        });
+      }
+    }
+
+    function disableTopoPulse() {
+      const el = topographyLayer.getElement();
+      if (el) el.classList.remove('leaflet-topography-pulse');
+    }
+
     function createRegionLabel(lat, lng, text) {
       return L.marker([lat, lng], {
         icon: L.divIcon({
@@ -1131,14 +1156,14 @@
         clickSound.currentTime = 0;
         clickSound.play();
 
-
-
         if (!isOn) {
           topographyLayer.addTo(map);
+          enableTopoPulse(); // <-- apply pulse after add
           btnTopoMode.src = "modebutton-on.png";
           btnTopoMode.dataset.state = "on";
           if (mapVisible && lightGrid) lightGrid.src = "indicator-on.png";
         } else {
+          disableTopoPulse(); // <-- optional cleanup
           map.removeLayer(topographyLayer);
           btnTopoMode.src = "modebutton-off.png";
           btnTopoMode.dataset.state = "off";
