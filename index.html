@@ -210,6 +210,16 @@
       padding-bottom: 0.2dvh;
       line-height: normal;
     }
+    
+    #control-panel-sticker {
+      position: absolute;
+      top: 72%;
+      left: -2%;
+      height: 30dvh;
+      width: auto;
+      pointer-events: none;
+      z-index: 150;
+    }
 
     #map-container.grayscale {
       filter: grayscale(100%) contrast(160%);
@@ -460,6 +470,7 @@
 <body>
   <div id="control-panel-wrapper">
     <img id="control-panel-base" src="control-panel-base.png" alt="" />
+    <img id="control-panel-sticker" src="Postit-Note1.png" alt="" />
     <div id="overlay-buttons">
       <img src="switch-on.png" id="btn-map-on" class="map-toggle-btn onoff-toggle" style="top: 83.5%; left: 85.42%;" draggable="false"/>
       <img src="switch-off.png" id="btn-map-off" class="map-toggle-btn onoff-toggle" style="top: 83.5%; left: 91.52%;" draggable="false"/>
