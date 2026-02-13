@@ -212,7 +212,7 @@
     }
 
     #map-container.grayscale {
-      filter: grayscale(100%) contrast(180%);
+      filter: grayscale(100%) contrast(160%);
     }
 
     #coord-input input::placeholder {
@@ -230,9 +230,9 @@
       100% { filter: hue-rotate(360deg); }
     }
     @keyframes topoPulse {
-      0%   { opacity: 0.65; }
+      0%   { opacity: 0.50; }
       50%  { opacity: 0.30; }
-      100% { opacity: 0.65; }
+      100% { opacity: 0.50; }
     }
     .leaflet-topography-pulse {
       animation: topoPulse 2.5s ease-in-out infinite;
@@ -381,6 +381,11 @@
       height: 5dvh;
       width: auto;
       opacity: 1 !important;
+    }
+
+    .color-dodge-overlay {
+      mix-blend-mode: color-dodge;
+      pointer-events: none;
     }
 
     .category-light {
@@ -626,12 +631,21 @@
     const mapLabels = [];
     const pressedLock = new Map();
 
+    const padTop = 300;
+    const padRight = 250;
+
+    const paddedMaxBounds = L.latLngBounds(
+      [0 + padTop, 0],
+      [4096, 4096 + padRight]
+    );
+
     const map = L.map('map', {
       crs: L.CRS.Simple,
       zoomControl: false,
-      maxBounds: [[0, 0], [4096, 4096]],
+      maxBounds: paddedMaxBounds,
       maxBoundsViscosity: 1.0
     });
+    const desiredCenter = L.latLng(1920, 2250);
     const coordLayerGroup = L.layerGroup().addTo(map);
 
     function pressButtonImage(button, pressedSrc, defaultSrc, delay = 50) {
@@ -661,7 +675,7 @@
 
     function setMinZoomToFitMap() {
       const bounds = [[0, 0], [4096, 4096]];
-      const minZoom = map.getBoundsZoom(bounds, false); // false = fit inside view
+      const minZoom = map.getBoundsZoom(bounds, false);
       map.setMinZoom(minZoom);
     }
 
@@ -672,13 +686,22 @@
 
     map.createPane('base'); map.getPane('base').style.zIndex = 200;
     map.createPane('base1'); map.getPane('base1').style.zIndex = 201;
-    map.createPane('topography'); map.getPane('topography').style.zIndex = 250;
+    map.createPane('terrainUnder'); map.getPane('terrainUnder').style.zIndex = 210;
+    map.createPane('topography'); map.getPane('topography');
+    const topoPane = map.getPane('topography');
+    topoPane.style.zIndex = 250;
+    topoPane.style.mixBlendMode = 'color-dodge';
+    topoPane.style.filter = 'brightness(1) saturate(0.8)';
     map.createPane('water'); map.getPane('water').style.zIndex = 300;
-    map.createPane('terrain'); map.getPane('terrain').style.zIndex = 400;
+    map.createPane('terrain');
+    const terrainPane = map.getPane('terrain');
+    terrainPane.style.zIndex = 400;
+    terrainPane.style.mixBlendMode = 'color-dodge';
+    terrainPane.style.filter = 'brightness(1) saturate(5) hue-rotate(-20deg)';
     map.createPane('road'); map.getPane('road').style.zIndex = 500;
     map.createPane('salt'); map.getPane('salt').style.zIndex = 600;
     map.createPane('mud'); map.getPane('mud').style.zIndex = 600;
-    map.createPane('cmp'); map.getPane('cmp').style.zIndex = 699
+    map.createPane('cmp'); map.getPane('cmp').style.zIndex = 699;
     map.createPane('structure'); map.getPane('structure').style.zIndex = 700;
     map.createPane('tnb'); map.getPane('tnb').style.zIndex = 701;
     map.createPane('walls'); map.getPane('walls').style.zIndex = 702;
@@ -695,7 +718,8 @@
     map.getPane('measure').style.zIndex = 9989;
 
     const baseLayer = L.imageOverlay('map-base.png', imageBounds, { pane: 'base' }).addTo(map);
-    const terrainLayer = L.imageOverlay('terrain-line.png', imageBounds, { pane: 'terrain' }).addTo(map);
+    const terrainunder = L.imageOverlay('terrain-line.png', imageBounds, { pane: 'terrainUnder', opacity: 0.25 }).addTo(map);
+    const terrainLayer = L.imageOverlay('terrain-line.png', imageBounds, { pane: 'terrain', opacity: 1 }).addTo(map);
     const base1Layer = L.imageOverlay('map-base1.png', imageBounds, { pane: 'base1' });
     const waterLayer = L.imageOverlay('water-layer.png', imageBounds, { pane: 'water' });
     const saltLayer = L.imageOverlay('salt-layer.png', imageBounds, { pane: 'salt', opacity: 0.8 });
@@ -841,7 +865,6 @@
       if (el) {
         el.classList.add('leaflet-topography-pulse');
       } else {
-        // wait for the image element to exist/load
         topographyLayer.once('load', () => {
           const el2 = topographyLayer.getElement();
           if (el2) el2.classList.add('leaflet-topography-pulse');
@@ -1246,7 +1269,7 @@
       map.invalidateSize();
       setMinZoomToFitViewport(100);
       const startZoom = map.getMinZoom() + 0.3;
-      map.setView([2048, 2048], startZoom);
+      map.setView([1920, 2250], startZoom);
 
       const categoryButtons = {
         'btn-cat-zones': 'cat-zones',
@@ -1375,7 +1398,13 @@
           setTimeout(() => {
             mapContainer.style.opacity = '1';
             map.invalidateSize();
+
             setMinZoomToFitViewport(100);
+
+            const startZoom = map.getMinZoom() + 0.3;
+
+            map.setView(desiredCenter, startZoom, { animate: false });
+
           }, 10);
 
           if (btnGrid.dataset.state === "on") {
@@ -1764,8 +1793,9 @@
       const parsed = parsePlayerCoord(input);
       if (!parsed) return;
 
-      const pxX = -0.0000020164 * parsed.x + 0.00329513 * parsed.y + 1840.72;
-      const pxY =  0.00329418 * parsed.x + 0.00002059 * parsed.y + 1976.96;
+      const pxX = 0.0000360393635 * parsed.x + 0.00332053474 * parsed.y + 2037.66808;
+      const pxY = 0.00332005842  * parsed.x + 0.000059369481 * parsed.y + 2029.32022;
+
       const latlng = L.latLng(mapSize - pxY, pxX);
 
       if (coordPathPoints.length >= 1) {
