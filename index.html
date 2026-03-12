@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Renatus Map</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
   <link rel="icon" type="image/png" href="/map/favicon.png">
   <link rel="shortcut icon" type="image/x-icon" href="/map/favicon.ico">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -176,6 +176,74 @@
       pointer-events: none;
     }
 
+    #btn-rp-mode-hitbox {
+      position: absolute;
+      top: 9%;
+      left: 8.4%;
+      width: 7dvh;
+      height: 6dvh;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      pointer-events: auto;
+      z-index: 9999;
+      overflow: visible;
+
+    } 
+
+    #btn-rp-mode-toggle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      height: 5dvh;
+      width: auto;
+      transform: translate(-48%, -54%) scale(2.5);
+      pointer-events: none;
+      opacity: 1 !important;
+    }
+
+    #rotate-warning {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.96);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999999;
+      pointer-events: all;
+    }
+
+    .rotate-warning-inner {
+      text-align: center;
+      color: #c0ffc0;
+      font-family: 'Courier New', monospace;
+      text-shadow:
+        0 0 2px #7fff7f,
+        0 0 6px #aaffaa,
+        0 0 12px #c0ffc0;
+      padding: 3dvh;
+    }
+
+    .rotate-icon {
+      font-size: 8dvh;
+      line-height: 1;
+      margin-bottom: 2dvh;
+      animation: rotatePrompt 1.8s ease-in-out infinite;
+    }
+
+    .rotate-text {
+      font-size: 2.4dvh;
+      line-height: 1.5;
+    }
+
+    @keyframes rotatePrompt {
+      0%   { transform: rotate(0deg) scale(1); opacity: 0.7; }
+      25%  { transform: rotate(0deg) scale(1.05); opacity: 1; }
+      50%  { transform: rotate(90deg) scale(1.1); opacity: 1; }
+      75%  { transform: rotate(90deg) scale(1.05); opacity: 1; }
+      100% { transform: rotate(0deg) scale(1); opacity: 0.7; }
+    }
+
+
     #coord-input {
       position: absolute;
       top: 43.1%;
@@ -213,16 +281,30 @@
     
     #control-panel-sticker {
       position: absolute;
-      top: 72%;
-      left: -2%;
-      height: 30dvh;
+      top: 74%;
+      left: 1%;
+      height: 23dvh;
       width: auto;
       pointer-events: none;
       z-index: 150;
+      transform: rotate(-10deg);
+      filter: brightness(0.9)
+    }
+
+    #service-date {
+      position: absolute;
+      top: 17%;
+      right: 1.5%;
+      height: 3.5dvh;
+      mix-blend-mode: hard-light;
+      opacity: 0.8;
+      width: auto;
+      pointer-events: none;
+      z-index: 1;
     }
 
     #map-container.grayscale {
-      filter: grayscale(100%) contrast(160%);
+      filter: grayscale(100%) contrast(150%);
     }
 
     #coord-input input::placeholder {
@@ -308,7 +390,7 @@
       z-index: 9999;
     }
     #btn-map-toggle { top: 82.5%; left: 90.52%; transform: scale(4); }
-    #status-light   { top: 5.8%; left: 90.22%; pointer-events: none; transform: scale(2.6); }
+    #status-light   { top: 6.7%; left: 90.22%; pointer-events: none; transform: scale(2.6); }
 
     .pulse-marker {
       position: absolute;
@@ -328,28 +410,31 @@
       text-align: center;
       white-space: nowrap;
       pointer-events: none;
+      -webkit-text-stroke: 4px #000;
+      paint-order: stroke fill;
       text-shadow:
-        0 0 2px #7fff7f,
-        0 0 6px #aaffaa,
-        0 0 12px #c0ffc0,
-        0 0 18px #c0ffc0,
-        0 0 24px #e0ffe0;
+        0 0 2px  #7fffee,
+        0 0 6px  #7fffee,
+        0 0 12px #aaffff,
+        0 0 24px #c0ffff,
+        0 0 40px #c0ffff,
+        0 0 70px #c0ffff;
       z-index: 9999;
       text-align: center;
       white-space: nowrap;
       position: relative;
     }
-    .map-text-label {              /* outer */
+    .map-text-label {
       position: relative;
     }
 
-    .map-text-label .label-inner { /* inner centered on the coord */
+    .map-text-label .label-inner {
       position: absolute;
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
       text-align: center;
-      white-space: nowrap; /* <br> still works for line breaks */
+      white-space: nowrap;
     }
     .clear {
       height: 10dvh;
@@ -398,6 +483,11 @@
       pointer-events: none;
     }
 
+    .color-multiply-overlay {
+      mix-blend-mode: multiply;
+      pointer-events: none;
+    }
+
     .category-light {
       width: 2.2dvh;
       height: 2.2dvh;
@@ -436,13 +526,19 @@
       font-size: 2.6dvh;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      text-shadow:
-        0 0 4px  #fff,
-        0 0 10px #fff,
-        0 0 18px #fff,
-        0 0 28px rgba(255,255,255,0.9),
-        0 0 40px rgba(255,255,255,0.8);
+      -webkit-text-stroke: 6px #000;
+      paint-order: stroke fill;
+      text-shadow:       
+        0 0 2px  #fff,
+        0 0 6px  #fff,
+        0 0 12px #fff,
+        0 0 24px #fff,
+        0 0 40px #fff,
+        0 0 70px #fff,
+        0 0 110px #fff;
+
       z-index: 99998;
+
       }
 
 
@@ -470,82 +566,153 @@
 <body>
   <div id="control-panel-wrapper">
     <img id="control-panel-base" src="control-panel-base.png" alt="" />
+    <img id="service-date" src="date.png" alt="" />
     <img id="control-panel-sticker" src="Postit-Note1.png" alt="" />
     <div id="overlay-buttons">
       <img src="switch-on.png" id="btn-map-on" class="map-toggle-btn onoff-toggle" style="top: 83.5%; left: 85.42%;" draggable="false"/>
       <img src="switch-off.png" id="btn-map-off" class="map-toggle-btn onoff-toggle" style="top: 83.5%; left: 91.52%;" draggable="false"/>
       <img src="light-off.png" id="status-light" class="status-light" />
-      <!-- Category: Zones -->
-      <img src="button-a.png" id="btn-cat-zones" class="map-toggle-btn category-toggle" data-category="cat-zones" data-state="off"  style="top: 59.1%; left: 3%; opacity: 1;" draggable="false" />
-      <img src="indicator-off.png" id="light-cat-zones" class="status-light category-light"  style="top: 59.9%; left: 6.1%;" draggable="false" />
-
-      <!-- Category: Environment -->
-      <img src="button-b.png" id="btn-cat-env" class="map-toggle-btn category-toggle" data-category="cat-env" data-state="off"  style="top: 67.1%; left: 3%; opacity: 1;" draggable="false" />
-      <img src="indicator-off.png" id="light-cat-env" class="status-light category-light"  style="top: 67.9%; left: 6.1%;" draggable="false" />
-
-      <!-- Category: Manmade -->
-      <img src="button-c.png" id="btn-cat-manmade" class="map-toggle-btn category-toggle" data-category="cat-manmade" data-state="off" style="top: 63.1%; left: 3%; opacity: 1;" draggable="false" />
-      <img src="indicator-off.png" id="light-cat-manmade" class="status-light category-light" style="top: 63.9%; left: 6.1%;" draggable="false" />
-
-      <!-- Category: Traversal -->
-      <img src="button-d.png" id="btn-cat-traversal" class="map-toggle-btn category-toggle" data-category="cat-traversal" data-state="off" style="top: 71.1%; left: 3%; opacity: 1;" draggable="false" />
-      <img src="indicator-off.png" id="light-cat-traversal" class="status-light category-light"  style="top: 71.9%; left: 6.1%;" draggable="false" />
-
-      <!-- Category: Labels -->
-      <img src="button-e.png" id="btn-cat-labels" class="map-toggle-btn category-toggle" data-category="cat-labels" data-state="off"  style="top: 55.1%; left: 3%; opacity: 1;" draggable="false" />
-      <img src="indicator-off.png" id="light-cat-labels" class="status-light category-light"  style="top: 55.9%; left: 6.1%;" draggable="false" />
-
-      <img src="tickletoggle-off.png" id="btn-tickletoggle" class="map-toggle-btn" data-state="off" style="top: 1.8%;  right: 1.5%; z-index: 9999; opacity: 0.75;" draggable="false" />
+      <img src="tickletoggle-off.png" id="btn-tickletoggle" class="map-toggle-btn" data-state="off" style="top: 1.8%;  right: 1.8%; z-index: 9999; opacity: 0.75; height: 0.9; width: auto;" draggable="false" />
       <div id="tickle-counter" style="position: absolute; top: 49%; left: 9.5%;  width: 6dvh; height: auto; color: rgba(171, 255, 171, 0.548); font-family: 'Courier New', monospace; font-size: 1.5dvh; text-align: right; white-space: nowrap; overflow: hidden; pointer-events: none; z-index: 9999; display: none;">0</div>
 
-      <div id="cat-zones" class="overlay-category" style="display:none;">
-        <img src="layerbutton-off.png" id="btn-patrol" class="map-toggle-btn layer-toggle" data-state="off" style="top: 55.8%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" id="btn-migration" class="map-toggle-btn layer-toggle" data-state="off" style="top: 59.8%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" id="btn-sanctuary" class="map-toggle-btn layer-toggle" data-state="off" style="top: 63.8%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" id="btn-spawns" class="map-toggle-btn layer-toggle" data-state="off" style="top: 67.8%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 71.8%; left: 10%;" draggable="false"/>
-      </div>
+      <div id="standard-controls">
+        <!-- Category: Zones -->
+        <img src="button-a.png" id="btn-cat-zones" class="map-toggle-btn category-toggle" data-category="cat-zones" data-state="off"  style="top: 59.1%; left: 3%; opacity: 1;" draggable="false" />
+        <img src="indicator-off.png" id="light-cat-zones" class="status-light category-light"  style="top: 59.9%; left: 6.1%;" draggable="false" />
 
-      <div id="cat-env" class="overlay-category" style="display:none;">
-        <img src="layerbutton-off.png" id="btn-water" class="map-toggle-btn layer-toggle" data-state="off" style="top: 55.8%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" id="btn-salt" class="map-toggle-btn layer-toggle" data-state="off" style="top: 59.8%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" id="btn-mud" class="map-toggle-btn layer-toggle" data-state="off" style="top: 63.8%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" id="btn-slipstreams" class="map-toggle-btn layer-toggle" data-state="off" style="top: 67.8%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 71.8%; left: 10%;" draggable="false"/>
-      </div>
+        <!-- Category: Environment -->
+        <img src="button-b.png" id="btn-cat-env" class="map-toggle-btn category-toggle" data-category="cat-env" data-state="off"  style="top: 67.1%; left: 3%; opacity: 1;" draggable="false" />
+        <img src="indicator-off.png" id="light-cat-env" class="status-light category-light"  style="top: 67.9%; left: 6.1%;" draggable="false" />
 
-      <div id="cat-manmade" class="overlay-category" style="display:none;">
-        <img src="layerbutton-off.png" id="btn-road" class="map-toggle-btn layer-toggle" data-state="off" style="top: 55.8%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" id="btn-structure" class="map-toggle-btn layer-toggle" data-state="off" style="top: 59.8%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" id="btn-walls" class="map-toggle-btn layer-toggle" data-state="off" style="top: 63.8%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" id="btn-tnb" class="map-toggle-btn layer-toggle" data-state="off" style="top: 67.8%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" id="btn-cmp" class="map-toggle-btn layer-toggle" data-state="off" style="top: 71.8%; left: 10%;" draggable="false"/>
-      </div>
+        <!-- Category: Manmade -->
+        <img src="button-c.png" id="btn-cat-manmade" class="map-toggle-btn category-toggle" data-category="cat-manmade" data-state="off" style="top: 63.1%; left: 3%; opacity: 1;" draggable="false" />
+        <img src="indicator-off.png" id="light-cat-manmade" class="status-light category-light" style="top: 63.9%; left: 6.1%;" draggable="false" />
 
-      <div id="cat-traversal" class="overlay-category" style="display:none;">
-        <img src="layerbutton-off.png" id="btn-flora" class="map-toggle-btn layer-toggle" data-state="off" style="top: 55.8%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" id="btn-fauna" class="map-toggle-btn layer-toggle" data-state="off" style="top: 59.8%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" id="btn-assets" class="map-toggle-btn layer-toggle" data-state="off" style="top: 63.8%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 67.8%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 71.8%; left: 10%;" draggable="false"/>
-      </div>
+        <!-- Category: Traversal -->
+        <img src="button-d.png" id="btn-cat-traversal" class="map-toggle-btn category-toggle" data-category="cat-traversal" data-state="off" style="top: 71.1%; left: 3%; opacity: 1;" draggable="false" />
+        <img src="indicator-off.png" id="light-cat-traversal" class="status-light category-light"  style="top: 71.9%; left: 6.1%;" draggable="false" />
 
-      <div id="cat-labels" class="overlay-category" style="display:none;">
-        <img src="layerbutton-off.png" id="btn-lakes" class="map-toggle-btn layer-toggle" data-state="off" style="top: 67.8%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" id="btn-regions" class="map-toggle-btn layer-toggle" data-state="off" style="top: 55.8%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" id="btn-outposts" class="map-toggle-btn layer-toggle" data-state="off" style="top: 59.8%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" id="btn-landmarks" class="map-toggle-btn layer-toggle" data-state="off" style="top: 63.8%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 71.8%; left: 10%;" draggable="false"/>
-      </div>
+        <!-- Category: Labels -->
+        <img src="button-e.png" id="btn-cat-labels" class="map-toggle-btn category-toggle" data-category="cat-labels" data-state="off"  style="top: 55.1%; left: 3%; opacity: 1;" draggable="false" />
+        <img src="indicator-off.png" id="light-cat-labels" class="status-light category-light"  style="top: 55.9%; left: 6.1%;" draggable="false" />
 
-      <div id="dummy-fillers">
-        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 55.8%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 59.8%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 63.8%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 67.8%; left: 10%;" draggable="false"/>
-        <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 71.8%; left: 10%;" draggable="false"/>
-      </div>
+        <div id="cat-zones" class="overlay-category" style="display:none;">
+          <img src="layerbutton-off.png" id="btn-patrol" class="map-toggle-btn layer-toggle" data-state="off" style="top: 55.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" id="btn-migration" class="map-toggle-btn layer-toggle" data-state="off" style="top: 59.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" id="btn-sanctuary" class="map-toggle-btn layer-toggle" data-state="off" style="top: 63.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" id="btn-spawns" class="map-toggle-btn layer-toggle" data-state="off" style="top: 67.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 71.8%; left: 10%;" draggable="false"/>
+        </div>
 
+        <div id="cat-env" class="overlay-category" style="display:none;">
+          <img src="layerbutton-off.png" id="btn-water" class="map-toggle-btn layer-toggle" data-state="off" style="top: 55.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" id="btn-salt" class="map-toggle-btn layer-toggle" data-state="off" style="top: 59.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" id="btn-mud" class="map-toggle-btn layer-toggle" data-state="off" style="top: 63.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" id="btn-slipstreams" class="map-toggle-btn layer-toggle" data-state="off" style="top: 67.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 71.8%; left: 10%;" draggable="false"/>
+        </div>
+
+        <div id="cat-manmade" class="overlay-category" style="display:none;">
+          <img src="layerbutton-off.png" id="btn-road" class="map-toggle-btn layer-toggle" data-state="off" style="top: 55.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" id="btn-structure" class="map-toggle-btn layer-toggle" data-state="off" style="top: 59.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" id="btn-walls" class="map-toggle-btn layer-toggle" data-state="off" style="top: 63.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" id="btn-tnb" class="map-toggle-btn layer-toggle" data-state="off" style="top: 67.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" id="btn-cmp" class="map-toggle-btn layer-toggle" data-state="off" style="top: 71.8%; left: 10%;" draggable="false"/>
+        </div>
+
+        <div id="cat-traversal" class="overlay-category" style="display:none;">
+          <img src="layerbutton-off.png" id="btn-flora" class="map-toggle-btn layer-toggle" data-state="off" style="top: 55.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" id="btn-fauna" class="map-toggle-btn layer-toggle" data-state="off" style="top: 59.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" id="btn-assets" class="map-toggle-btn layer-toggle" data-state="off" style="top: 63.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 67.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 71.8%; left: 10%;" draggable="false"/>
+        </div>
+
+        <div id="cat-labels" class="overlay-category" style="display:none;">
+          <img src="layerbutton-off.png" id="btn-lakes" class="map-toggle-btn layer-toggle" data-state="off" style="top: 67.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" id="btn-regions" class="map-toggle-btn layer-toggle" data-state="off" style="top: 55.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" id="btn-outposts" class="map-toggle-btn layer-toggle" data-state="off" style="top: 59.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" id="btn-landmarks" class="map-toggle-btn layer-toggle" data-state="off" style="top: 63.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 71.8%; left: 10%;" draggable="false"/>
+        </div>
+
+        <div id="dummy-fillers">
+          <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 55.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 59.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 63.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 67.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 71.8%; left: 10%;" draggable="false"/>
+        </div>
+      </div>
+      <div id="rp-controls" style="display: none;">
+        <!-- RP Category: A -->
+        <img src="button-e.png" id="btn-rp-cat-a" class="map-toggle-btn rp-category-toggle" data-category="rp-cat-a" data-state="off" style="top: 55.1%; left: 3%; opacity: 1;" draggable="false" />
+        <img src="indicator-off.png" id="light-rp-cat-a" class="status-light category-light rp-category-light" style="top: 55.9%; left: 6.1%;" draggable="false" />
+
+        <!-- RP Category: B -->
+        <img src="button-a.png" id="btn-rp-cat-b" class="map-toggle-btn rp-category-toggle" data-category="rp-cat-b" data-state="off" style="top: 59.1%; left: 3%; opacity: 1;" draggable="false" />
+        <img src="indicator-off.png" id="light-rp-cat-b" class="status-light category-light rp-category-light" style="top: 59.9%; left: 6.1%;" draggable="false" />
+
+        <!-- RP Category: C -->
+        <img src="button-c.png" id="btn-rp-cat-c" class="map-toggle-btn rp-category-toggle" data-category="rp-cat-c" data-state="off" style="top: 63.1%; left: 3%; opacity: 1;" draggable="false" />
+        <img src="indicator-off.png" id="light-rp-cat-c" class="status-light category-light rp-category-light" style="top: 63.9%; left: 6.1%;" draggable="false" />
+
+        <!-- RP Category: D -->
+        <img src="button-b.png" id="btn-rp-cat-d" class="map-toggle-btn rp-category-toggle" data-category="rp-cat-d" data-state="off" style="top: 67.1%; left: 3%; opacity: 1;" draggable="false" />
+        <img src="indicator-off.png" id="light-rp-cat-d" class="status-light category-light rp-category-light" style="top: 67.9%; left: 6.1%;" draggable="false" />
+
+        <!-- RP Category: E -->
+        <img src="button-d.png" id="btn-rp-cat-e" class="map-toggle-btn rp-category-toggle" data-category="rp-cat-e" data-state="off" style="top: 71.1%; left: 3%; opacity: 1;" draggable="false" />
+        <img src="indicator-off.png" id="light-rp-cat-e" class="status-light category-light rp-category-light" style="top: 71.9%; left: 6.1%;" draggable="false" />
+
+        <div id="rp-cat-a" class="rp-overlay-category" style="display:none;">
+          <img src="layerbutton-off.png" id="btn-rp-a1" class="map-toggle-btn layer-toggle" data-state="off" style="top: 55.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" id="btn-rp-a2" class="map-toggle-btn layer-toggle" data-state="off" style="top: 59.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" id="btn-rp-a3" class="map-toggle-btn layer-toggle" data-state="off" style="top: 63.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 67.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 71.8%; left: 10%;" draggable="false"/>
+        </div>
+
+        <div id="rp-cat-b" class="rp-overlay-category" style="display:none;">
+          <img src="layerbutton-off.png" id="btn-rp-b1" class="map-toggle-btn layer-toggle" data-state="off" style="top: 55.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" id="btn-rp-b2" class="map-toggle-btn layer-toggle" data-state="off" style="top: 59.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" id="btn-rp-b3" class="map-toggle-btn layer-toggle" data-state="off" style="top: 63.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 67.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 71.8%; left: 10%;" draggable="false"/>
+        </div>
+
+        <div id="rp-cat-c" class="rp-overlay-category" style="display:none;">
+          <img src="layerbutton-off.png" id="btn-rp-c1" class="map-toggle-btn layer-toggle" data-state="off" style="top: 55.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" id="btn-rp-c2" class="map-toggle-btn layer-toggle" data-state="off" style="top: 59.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" id="btn-rp-c3" class="map-toggle-btn layer-toggle" data-state="off" style="top: 63.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 67.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 71.8%; left: 10%;" draggable="false"/>
+        </div>
+
+        <div id="rp-cat-d" class="rp-overlay-category" style="display:none;">
+          <img src="layerbutton-off.png" id="btn-rp-d1" class="map-toggle-btn layer-toggle" data-state="off" style="top: 55.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" id="btn-rp-d2" class="map-toggle-btn layer-toggle" data-state="off" style="top: 59.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" id="btn-rp-d3" class="map-toggle-btn layer-toggle" data-state="off" style="top: 63.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 67.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 71.8%; left: 10%;" draggable="false"/>
+        </div>
+
+        <div id="rp-cat-e" class="rp-overlay-category" style="display:none;">
+          <img src="layerbutton-off.png" id="btn-rp-e1" class="map-toggle-btn layer-toggle" data-state="off" style="top: 55.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" id="btn-rp-e2" class="map-toggle-btn layer-toggle" data-state="off" style="top: 59.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" id="btn-rp-e3" class="map-toggle-btn layer-toggle" data-state="off" style="top: 63.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 67.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 71.8%; left: 10%;" draggable="false"/>
+        </div>
+
+        <div id="rp-dummy-fillers">
+          <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 55.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 59.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 63.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 67.8%; left: 10%;" draggable="false"/>
+          <img src="layerbutton-off.png" class="map-toggle-btn layer-toggle dummy-button" style="top: 71.8%; left: 10%;" draggable="false"/>
+        </div>
+      </div>
       <div id="numpad-container" style="
         position: absolute;
         top: 60.8%;
@@ -593,6 +760,10 @@
       <img src="modebutton-off.png" id="btn-base1" class="map-toggle-btn mode-toggle" data-state="off" style="top: 18.8%; left: 2.8%;" draggable="false"/>
       <img src="indicator-off.png" id="light-base1" class="status-light mode-light" style="top: 16.5%; left: 3.1%;" draggable="false"/>
 
+      <!-- RP Mode -->
+      <div id="btn-rp-mode-hitbox">
+       <img src="yellow-off.png" id="btn-rp-mode-toggle" class="map-toggle-btn mode-toggle" data-state="off"  draggable="false"/>
+      </div>
       <img src="measure-off.png" id="btn-measure" class="map-toggle-btn measure-toggle" data-state="off" style="top: 32.8%;  left: 86.42%;" draggable="false"/>
       <div id="coord-input" style="display: none;">
         <input type="text" id="coord-full" placeholder="Paste coords" />
@@ -639,6 +810,23 @@
     let coordPathLayer = null;
     let coordStartMarker = null;
     let coordEndMarker = null;
+    let rpModeEnabled = false;
+    const defaultInfoContent = `
+      <strong>CATEGORIES</strong>
+      <span>1-Labels</span>
+      <span>2-Zones</span>
+      <span>3-Structures</span>
+      <span>4-Environment</span>
+      <span>5-Organics</span>
+    `;
+    const rpDefaultInfoContent = `
+      <strong>CATEGORIES</strong>
+      <span>1-Temp1</span>
+      <span>2-Temp2</span>
+      <span>3-Temp3</span>
+      <span>4-Temp4</span>
+      <span>5-Temp5</span>
+    `;
     const mapLabels = [];
     const pressedLock = new Map();
 
@@ -683,6 +871,131 @@
       map.setMinZoom(zoom);
     }
 
+    function updateRpModeVisuals() {
+      const btn = document.getElementById('btn-rp-mode-toggle');
+      if (!btn) return;
+
+      if (rpModeEnabled && mapVisible) {
+        btn.src = 'green-on.png';
+        btn.dataset.state = 'on';
+      } else if (rpModeEnabled && !mapVisible) {
+        btn.src = 'green-off.png';
+        btn.dataset.state = 'on';
+      } else if (!rpModeEnabled && mapVisible) {
+        btn.src = 'yellow-on.png';
+        btn.dataset.state = 'off';
+      } else {
+        btn.src = 'yellow-off.png';
+        btn.dataset.state = 'off';
+      }
+    }
+
+
+
+    function isMobileLikeDevice() {
+      return (
+        /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) ||
+        window.matchMedia("(pointer: coarse)").matches
+      );
+    }
+
+    function checkOrientation() {
+      const rotateWarning = document.getElementById("rotate-warning");
+      if (!rotateWarning) return;
+
+      const mobile = isMobileLikeDevice();
+      const portrait = window.innerHeight > window.innerWidth;
+
+      if (mobile && portrait) {
+        rotateWarning.style.display = "flex";
+      } else {
+        rotateWarning.style.display = "none";
+      }
+    }
+
+    async function tryLockLandscape() {
+      if (!isMobileLikeDevice()) return;
+      if (!screen.orientation || !screen.orientation.lock) return;
+      if (window.innerWidth >= window.innerHeight) {
+        try {
+          await screen.orientation.lock("landscape");
+        } catch (e) {
+          // ignored: unsupported or blocked by browser
+        }
+      }
+    }
+
+    window.addEventListener("load", () => {
+      checkOrientation();
+
+      const firstInteraction = async () => {
+        await tryLockLandscape();
+        checkOrientation();
+      };
+
+      document.addEventListener("click", firstInteraction, { once: true });
+      document.addEventListener("touchstart", firstInteraction, { once: true });
+    });
+
+    window.addEventListener("resize", checkOrientation);
+    window.addEventListener("orientationchange", () => {
+      checkOrientation();
+      tryLockLandscape();
+    });
+
+
+
+    function refreshControlSet() {
+      const standardControls = document.getElementById('standard-controls');
+      const rpControls = document.getElementById('rp-controls');
+      const infoBox = document.getElementById('category-info-box');
+      const dummyFillers = document.getElementById('dummy-fillers');
+      const rpDummyFillers = document.getElementById('rp-dummy-fillers');
+
+      if (!standardControls || !rpControls || !infoBox) return;
+
+      document.querySelectorAll('.overlay-category').forEach(div => div.style.display = 'none');
+      document.querySelectorAll('.rp-overlay-category').forEach(div => div.style.display = 'none');
+
+      document.querySelectorAll('.category-toggle').forEach(btn => btn.dataset.state = 'off');
+      document.querySelectorAll('.rp-category-toggle').forEach(btn => btn.dataset.state = 'off');
+
+      document.querySelectorAll('.category-light').forEach(lights =>{
+        lights.src = 'indicator-off.png';
+      });
+
+      if (rpModeEnabled) {
+        standardControls.style.display = 'none';
+        rpControls.style.display = 'block';
+
+        if (dummyFillers) dummyFillers.style.display = 'none';
+        if (rpDummyFillers) rpDummyFillers.style.display = 'block';
+
+        if (mapVisible) {
+          infoBox.innerHTML = rpDefaultInfoContent;
+          infoBox.style.display = 'block';
+          setInfoBoxAlignment("left");
+        } else {
+          infoBox.innerHTML = '';
+          infoBox.style.display = 'none'
+        }
+      } else {
+        standardControls.style.display = 'block';
+        rpControls.style.display = 'none';
+
+        if (dummyFillers) dummyFillers.style.display = 'block';
+        if (rpDummyFillers) rpDummyFillers.style.display = 'none';
+
+        if (mapVisible) {
+          infoBox.innerHTML = defaultInfoContent;
+          infoBox.style.display = 'block';
+          setInfoBoxAlignment("left");
+        } else {
+          infoBox.innerHTML = '';
+          infoBox.style.display = 'none'
+        }
+      }
+    }
 
     function setMinZoomToFitMap() {
       const bounds = [[0, 0], [4096, 4096]];
@@ -745,7 +1058,7 @@
     const assetsLayer = L.imageOverlay('assets-layer.png', imageBounds, { pane: 'assets' });
     const wallsLayer = L.imageOverlay('wall-layer.png', imageBounds, { pane: 'walls' });
     const tnbLayer = L.imageOverlay('tunnels-bridges-layer.png', imageBounds, { pane: 'tnb' });
-    const migrationLayer = L.imageOverlay('migration-layer.png', imageBounds, { pane: 'migration' });
+    const migrationLayer = L.imageOverlay('migration-layer.png', imageBounds, { pane: 'migration', opacity: 0.65});
     const patrolLayer = L.imageOverlay('patrol-layer.png', imageBounds, { pane: 'patrol' });
     const topographyLayer = L.imageOverlay('topography-layer.png', imageBounds, { pane: 'topography' });
 
@@ -755,84 +1068,85 @@
       "btn-landmarks": L.layerGroup(),
       "btn-regions": L.layerGroup()
     };
-    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(2900, 770, "North<br>Lake"));
-    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(1715, 1615, "Highlands<br>Lake"));
-    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(3044, 1062, "North<br>River"));
-    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(2086, 1108, "Water<br>Access<br>Lake"));
-    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(2375, 1389, "Water<br>Access<br>River"));
-    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(2554, 1730, "The<br>Fork"));
-    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(2985, 1418, "Roaring<br>Falls"));
-    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(3329, 1522, "East<br>Lake"));
-    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(2447, 2123, "The<br>Delta"));
-    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(1561, 2192, "Aviary<br>Dam"));
-    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(2423, 2631, "The<br>Estuary"));
-    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(2170, 2847, "Eastern<br>Swamp"));
-    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(1755, 2918, "Western<br>Swamp"));
-    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(1214, 2419, "South<br>River"));
-    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(1172, 2772, "South<br>Lake"));
+    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(3113, 820, "North<br>Lake"));
+    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(1890, 1680, "Highlands<br>Lake"));
+    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(3300, 1000, "North<br>River"));
+    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(2285, 1165, "Water<br>Access<br>Lake"));
+    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(2615, 1435, "Water<br>Access<br>River"));
+    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(2765, 1795, "The<br>Fork"));
+    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(3190, 1470, "Roaring<br>Falls"));
+    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(3550, 1595, "East<br>Lake"));
+    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(2740, 2290, "The<br>Delta"));
+    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(1770, 2250, "Aviary<br>Dam"));
+    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(2630, 2700, "The<br>Estuary"));
+    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(2350, 2840, "Eastern<br>Swamp"));
+    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(1925, 2940, "Western<br>Swamp"));
+    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(1430, 2460, "South<br>River"));
+    labelGroups["btn-lakes"].addLayer(createLabelFromPixels(1380, 2820, "South<br>Lake"));
 
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(2520, 611, "Site<br>C14"));
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(2631, 914, "Site<br>E15"));
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(2488, 1137, "Site<br>F14"));
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(2957, 1158, "Site<br>F17"));
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(2783, 1248, "Site<br>G16"));
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(3342, 1295, "Site<br>G19"));
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(3585, 1277, "Site<br>G21"));
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(3415, 1533, "Site<br>H20"));
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(2923, 2040, "Site<br>K17"));
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(2662, 2097, "Site<br>L15"));
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(2133, 1672, "Site<br>I12"));
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(1750, 1744, "Site<br>J10-1"));
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(1713, 1861, "Site<br>J10-2"));
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(1470, 2163, "Site<br>L8"));
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(1297, 2156, "Site<br>L7"));
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(1268, 2026, "Site<br>K7"));
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(1125, 2005, "Site<br>K6"));
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(1004, 1737, "Site<br>J5"));
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(612, 2668, "Site<br>N9"));
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(1928, 2566, "Site<br>N11"));
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(3478, 1043, "Eastern<br>Dock"));
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(379, 2936, "Western<br>Dock"));
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(2923, 948, "Northern<br>Padock"));
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(3171, 1499, "Eastern<br>Padock"));
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(634, 2973, "Southern<br>Padock"));
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(1704, 2356, "Aviary"));
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(1771, 2148, "A.1"));
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(1922, 2305, "A.2"));
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(1822, 2565, "A.3"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(2725, 640, "Site<br>B14"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(2820, 960, "Site<br>D15"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(2690, 1180, "Site<br>E14"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(3140, 1160, "Site<br>E17"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(2985, 1275, "Site<br>F16"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(3540, 1310, "Site<br>F19"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(3785, 1325, "Site<br>F21"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(3645, 1545, "Site<br>H20"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(3130, 2075, "Site<br>K17"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(2870, 2140, "Site<br>K15"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(2330, 1695, "Site<br>I12"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(1975, 1780, "Site<br>J10-1"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(1930, 7865, "Site<br>J10-2"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(1665, 2190, "Site<br>K8"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(1500, 2065, "Site<br>K7-1"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(1515, 2175, "Site<br>K7-2"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(1340, 2055, "Site<br>K6"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(1210, 1790, "Site<br>I6"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(1800, 2710, "Site<br>N9"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(2140, 2600, "Site<br>N11"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(3690, 1095, "Eastern<br>Dock"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(590, 3020, "Western<br>Dock"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(3290, 835, "Northern<br>Padock"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(3365, 1540, "Eastern<br>Padock"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(855, 3045, "Southern<br>Padock"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(1912, 2412, "Aviary"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(1965, 2200, "A.1"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(2130, 2370, "A.2"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(2070, 2565, "A.3"));
     /*labelGroups["btn-outposts"].addLayer(createLabelFromPixels(X, Y, "A.4")); */
     /*labelGroups["btn-outposts"].addLayer(createLabelFromPixels(X, Y, "A.5")); */
-    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(1524, 2230, "A.6"));
+    labelGroups["btn-outposts"].addLayer(createLabelFromPixels(1740, 2275, "A.6"));
 
 
-    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(2750, 1660, "Split<br>Rock"));
-    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(3302, 1831, "Tidal<br>Pools"));
-    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(1666, 1463, "Look-out<br>Rock"));
-    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(1706, 1812, "Highlands<br>Underpass"));
-    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(1369, 1625, "Highlands<br>Valley"));
-    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(950, 2680, "Snakehead<br>Lagoon"));
-    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(1345, 2228, "The<br>Gorge"));
-    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(1008, 905, "Key Hole"));
-    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(2176, 842, "Stone<br>Archway"));
-    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(1380, 2880, "Swamp<br>Ravine"));
-    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(831, 2465, "The<br>Sandbars"));
-    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(1935, 3373, "Razor<br>Rocks"));
-    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(3314, 339, "Northern<br>Point"));
-    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(1047, 3337, "Southern<br>Point"));
-    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(2455, 2339, "Seaview<br>Plateau"));
+    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(2950, 1710, "Split<br>Rock"));
+    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(3510, 1890, "Tidal<br>Pools"));
+    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(1540, 1820, "Kissing<br>Rocks"));
+    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(1910, 1870, "Highlands<br>Underpass"));
+    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(1550, 1650, "Highlands<br>Valley"));
+    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(1150, 2740, "Snakehead<br>Lagoon"));
+    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(1585, 2235, "The<br>Gorge"));
+    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(1200, 965, "Key Hole"));
+    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(1485, 825, "Stone<br>Archway"));
+    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(1655, 2940, "Swamp<br>Valley"));
+    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(1035, 2465, "The<br>Sandbars"));
+    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(2140, 3430, "Razor<br>Rocks"));
+    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(3470, 280, "Northern<br>Point"));
+    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(1250, 3380, "Southern<br>Point"));
+    labelGroups["btn-landmarks"].addLayer(createLabelFromPixels(2620, 2410, "Seaview<br>Plateau"));
 
 
-    labelGroups["btn-regions"].addLayer(createRegionLabelFromPixels(1551, 1612, "THE<BR>HIGHLANDS"));
-    labelGroups["btn-regions"].addLayer(createRegionLabelFromPixels(3126, 836, "NOTHERN<BR>PLAINS"));
-    labelGroups["btn-regions"].addLayer(createRegionLabelFromPixels(2424, 786, "NORTHERN<BR>JUNGLE"));
-    labelGroups["btn-regions"].addLayer(createRegionLabelFromPixels(2717, 1090, "THE<BR>CALDERA"));
-    labelGroups["btn-regions"].addLayer(createRegionLabelFromPixels(2255, 1607, "CENTRAL<BR>jUNGLE"));
-    labelGroups["btn-regions"].addLayer(createRegionLabelFromPixels(2965, 1665, "EASTERN<BR>JUNGLE"));
-    labelGroups["btn-regions"].addLayer(createRegionLabelFromPixels(1948, 2942, "THE<BR>SWAMPS"));
-    labelGroups["btn-regions"].addLayer(createRegionLabelFromPixels(2447, 2123, "THE<BR>DELTA"));
-    labelGroups["btn-regions"].addLayer(createRegionLabelFromPixels(1704, 2356, "THE<BR>AVIARY"));
-    labelGroups["btn-regions"].addLayer(createRegionLabelFromPixels(856, 2856, "SOUTHERN<BR>PLAINS"));
-    labelGroups["btn-regions"].addLayer(createRegionLabelFromPixels(1026, 2144, "WEST<BR>RAIL"));
+    labelGroups["btn-regions"].addLayer(createRegionLabelFromPixels(1720, 1630, "THE<BR>HIGHLANDS"));
+    labelGroups["btn-regions"].addLayer(createRegionLabelFromPixels(3190, 850, "NOTHERN<BR>PLAINS"));
+    labelGroups["btn-regions"].addLayer(createRegionLabelFromPixels(980, 3015, "SOUTHERN<BR>PLAINS"));
+    labelGroups["btn-regions"].addLayer(createRegionLabelFromPixels(2495, 1015, "NORTHERN<BR>JUNGLE"));
+    labelGroups["btn-regions"].addLayer(createRegionLabelFromPixels(1420, 2705, "SOUTHERN<BR>JUNGLE"));
+    labelGroups["btn-regions"].addLayer(createRegionLabelFromPixels(2385, 1840, "CENTRAL<BR>jUNGLE"));
+    labelGroups["btn-regions"].addLayer(createRegionLabelFromPixels(3315, 1705, "EASTERN<BR>JUNGLE"));
+    labelGroups["btn-regions"].addLayer(createRegionLabelFromPixels(2930, 1135, "THE<BR>CALDERA"));
+    labelGroups["btn-regions"].addLayer(createRegionLabelFromPixels(2175, 2900, "THE<BR>SWAMPS"));
+    labelGroups["btn-regions"].addLayer(createRegionLabelFromPixels(2740, 2290, "THE<BR>DELTA"));
+    labelGroups["btn-regions"].addLayer(createRegionLabelFromPixels(1912, 2412, "THE<BR>AVIARY"));
+    labelGroups["btn-regions"].addLayer(createRegionLabelFromPixels(1120, 2050, "WEST<BR>RAIL"));
 
 
     const toggleableLayers = {
@@ -858,6 +1172,23 @@
       "btn-outposts": labelGroups["btn-outposts"],
       "btn-landmarks": labelGroups["btn-landmarks"],
       "btn-regions": labelGroups["btn-regions"],
+
+      "btn-rp-a1": L.layerGroup(),
+      "btn-rp-a2": L.layerGroup(),
+      "btn-rp-a3": L.layerGroup(),
+      "btn-rp-b1": L.layerGroup(),
+      "btn-rp-b2": L.layerGroup(),
+      "btn-rp-b3": L.layerGroup(),
+      "btn-rp-c1": L.layerGroup(),
+      "btn-rp-c2": L.layerGroup(),
+      "btn-rp-c3": L.layerGroup(),
+      "btn-rp-d1": L.layerGroup(),
+      "btn-rp-d2": L.layerGroup(),
+      "btn-rp-d3": L.layerGroup(),
+      "btn-rp-e1": L.layerGroup(),
+      "btn-rp-e2": L.layerGroup(),
+      "btn-rp-e3": L.layerGroup(),
+
     };
 
     function fromPixelCoords(x, y) {
@@ -907,16 +1238,16 @@
     }
 
     function pressButtonImage(button, pressedSrc, defaultSrc, delay = 150) {
-      if (pressedLock.get(button)) return; // Don't retrigger if already pressed
+      if (pressedLock.get(button)) return;
 
-      pressedLock.set(button, true);       // Lock this button
+      pressedLock.set(button, true);
       button.src = pressedSrc;
       button.style.pointerEvents = 'none';
 
       setTimeout(() => {
         button.src = defaultSrc;
         button.style.pointerEvents = '';
-        pressedLock.set(button, false);    // Release lock
+        pressedLock.set(button, false);
       }, delay);
     }
 
@@ -1006,14 +1337,11 @@
       const coordInputField = document.getElementById('coord-full');
       const clickSound = document.getElementById('click-sound');
       
-
-      // Press animation helper
       function pressBtn(btn, delay = 100) {
         const src = btn.src.replace('.png', '');
         pressButtonImage(btn, `${src}-in.png`, `${src}.png`, delay);
       }
 
-      // Number input buttons
       document.querySelectorAll('.numpad-btn[data-num]').forEach(btn => {
         btn.addEventListener('click', () => {
           clickSound.currentTime = 0;
@@ -1023,6 +1351,18 @@
         });
       });
 
+      const btnRpMode = document.getElementById('btn-rp-mode-hitbox');
+
+      btnRpMode.addEventListener('click', () => {
+        const clickSound = document.getElementById('click-sound');
+        clickSound.currentTime = 0;
+        clickSound.play();
+        rpModeEnabled = !rpModeEnabled;
+        updateRpModeVisuals();
+        refreshControlSet();
+      });
+
+
       const btnSpace = document.getElementById('btn-numpad-space');
       btnSpace.addEventListener('click', () => {
         clickSound.currentTime = 0;
@@ -1031,7 +1371,6 @@
         coordInputField.value += ' ';
       });
 
-      // Confirm button = ENTER
       const btnConfirm = document.getElementById('btn-numpad-confirm');
       btnConfirm.addEventListener('click', (e) => {
         clickSound.currentTime = 0;
@@ -1041,7 +1380,6 @@
         coordInputField.value = '';
       });
 
-      // Clear button = same as btn-clear-coords
       const btnClear = document.getElementById('btn-numpad-clear');
       btnClear.addEventListener('click', (e) => {
         clickSound.currentTime = 0;
@@ -1053,19 +1391,23 @@
 
       const cellSize = 4096 / 24;
       const greek = [
-        " ", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
+        "", "", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
         "L", "M", "N", "N", "O", "P", "Q", "R", "S", "T", "U", "V"
       ];
 
-      // Add grid lines
-      for (let i = 1; i < 24; i++) {
+
+      const gridTop = 0;
+      const gridBottom = 4096+ padTop;
+      const gridLeft = 0;
+      const gridRight = 4096 + padRight;
+      const totalcells = Math.ceil((4096+padRight)/cellSize)
+      for (let i = 1; i < totalcells; i++) {
         const x = i * cellSize;
         const y = i * cellSize;
-        gridLayerGroup.addLayer(L.polyline([[0, x], [4096, x]], { color: '#00ff00', weight: 1, opacity: 0.3 }));
-        gridLayerGroup.addLayer(L.polyline([[y, 0], [y, 4096]], { color: '#00ff00', weight: 1, opacity: 0.3 }));
+        gridLayerGroup.addLayer(L.polyline([[gridTop, x], [gridBottom, x]], { color: '#00ff00', weight: 1, opacity: 0.5 }));
+        gridLayerGroup.addLayer(L.polyline([[y, gridLeft], [y, gridRight]], { color: '#00ff00', weight: 1, opacity: 0.5 }));
       }
 
-      // Add labels
       for (let i = 0; i < 24; i++) {
         const offset = (i + 0.5) * cellSize;
 
@@ -1113,7 +1455,7 @@
 
         const col = document.createElement('div');
         col.className = 'floating-label';
-        col.innerText = (i).toString();
+        col.innerText = (i-1).toString();
         floatLabelContainer.appendChild(col);
         colLabels.push({ el: col, lng: (i + 0.5) * cellSize });
       }
@@ -1123,7 +1465,7 @@
         const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
 
         const base = Math.min(size.x, size.y);
-        const inset = Math.round(clamp(base * 0.04, 15, 75)); // 4% of map, between 12–70px
+        const inset = Math.round(clamp(base * 0.04, 15, 75));
 
         const padX = inset;
         const padY = inset;
@@ -1132,7 +1474,7 @@
 
         const west = map.getBounds().getWest();
         rowLabels.forEach(({ el, lat }) => {
-          const p = map.latLngToContainerPoint([lat, west]); // use west edge instead of lng=0
+          const p = map.latLngToContainerPoint([lat, west]);
           const halfH = (el.offsetHeight || 0) / 2;
           const left = clamp(p.x + insetX, padX, size.x - padX);
           const top  = clamp(p.y - halfH,  padY, size.y - padY);
@@ -1192,12 +1534,12 @@
 
         if (!isOn) {
           topographyLayer.addTo(map);
-          enableTopoPulse(); // <-- apply pulse after add
+          enableTopoPulse();
           btnTopoMode.src = "modebutton-on.png";
           btnTopoMode.dataset.state = "on";
           if (mapVisible && lightGrid) lightGrid.src = "indicator-on.png";
         } else {
-          disableTopoPulse(); // <-- optional cleanup
+          disableTopoPulse();
           map.removeLayer(topographyLayer);
           btnTopoMode.src = "modebutton-off.png";
           btnTopoMode.dataset.state = "off";
@@ -1212,10 +1554,8 @@
         clickSound.currentTime = 0;
         clickSound.play();
 
-        // Always play the press animation
         pressButtonImage(btnMeasure, "measure-on.png", "measure-off.png", 120);
 
-        // Do NOT toggle the measure mode if map is off
         if (!mapVisible) return;
 
         if (!isOn) {
@@ -1266,11 +1606,25 @@
 
         if (!isOn) {
           mapContainer.classList.add('grayscale');
+          const baseE1 = baseLayer.getElement();
+          const base1E1 = base1Layer.getElement();
+
+          if (baseE1) baseE1.style.filter = "brightness(1.15)";
+          if (base1E1) base1E1.style.filter = "brightness(0.6)";
+
           btnContrastMode.src = "modebutton-on.png";
           btnContrastMode.dataset.state = "on";
           if (mapVisible && lightGrid) lightGrid.src = "indicator-on.png";
+
         } else {
+
           mapContainer.classList.remove('grayscale');
+          const baseE1 = baseLayer.getElement();
+          const base1E1 = base1Layer.getElement();
+
+          if (baseE1) baseE1.style.filter = "";
+          if (base1E1) base1E1.style.filter = "";
+
           btnContrastMode.src = "modebutton-off.png";
           btnContrastMode.dataset.state = "off";
           if (mapVisible && lightGrid) lightGrid.src = "indicator-off.png";
@@ -1306,14 +1660,6 @@
         'cat-labels': { name: 'LABELS', layers: ['Regions-1', 'Structures-2', 'Landmarks-3', 'Water-4'] }
       };
 
-      const defaultInfoContent = `
-        <strong>CATEGORIES</strong>
-        <span>1-Labels</span>
-        <span>2-Zones</span>
-        <span>3-Structures</span>
-        <span>4-Environment</span>
-        <span>5-Organics</span>
-      `;
 
       let activeCategory = null;
 
@@ -1340,7 +1686,7 @@
           const light = document.getElementById(`light-${catId}`);
           const infoBox = document.getElementById('category-info-box');
 
-          document.querySelectorAll('.overlay-category').forEach(div => div.style.display = 'none');
+          document.querySelectorAll('#standard-controls .overlay-category').forEach(div => div.style.display = 'none');
 
           if (isOn) {
             btn.dataset.state = "off";
@@ -1355,7 +1701,7 @@
             document.querySelectorAll('.category-toggle').forEach(otherBtn => {
               otherBtn.dataset.state = "off";
             });
-            document.querySelectorAll('.category-light').forEach(lightEl => {
+            document.querySelectorAll('#standard-controls .category-light').forEach(lightEl => {
               lightEl.src = "indicator-off.png";
             });
 
@@ -1377,6 +1723,83 @@
         });
       }
 
+      const rpCategoryButtons = {
+        'btn-rp-cat-a': 'rp-cat-a',
+        'btn-rp-cat-b': 'rp-cat-b',
+        'btn-rp-cat-c': 'rp-cat-c',
+        'btn-rp-cat-d': 'rp-cat-d',
+        'btn-rp-cat-e': 'rp-cat-e',
+      };
+
+      const rpCategoryButtonImages = {
+        'btn-rp-cat-a': { default: 'button-e.png', pressed: 'button-e-in.png' },
+        'btn-rp-cat-b': { default: 'button-a.png', pressed: 'button-a-in.png' },
+        'btn-rp-cat-c': { default: 'button-c.png', pressed: 'button-c-in.png' },
+        'btn-rp-cat-d': { default: 'button-b.png', pressed: 'button-b-in.png' },
+        'btn-rp-cat-e': { default: 'button-d.png', pressed: 'button-d-in.png' },
+      };
+
+      const rpCategoryDescriptions = {
+        'rp-cat-a': { name: 'TEMP1', layers: ['Temp1-1', 'Temp1-2', 'Temp1-3'] },
+        'rp-cat-b': { name: 'TEMP2', layers: ['Temp2-1', 'Temp2-2', 'Temp2-3'] },
+        'rp-cat-c': { name: 'TEMP3', layers: ['Temp3-1', 'Temp3-2', 'Temp3-3'] },
+        'rp-cat-d': { name: 'TEMP4', layers: ['Temp4-1', 'Temp4-2', 'Temp4-3'] },
+        'rp-cat-e': { name: 'TEMP5', layers: ['Temp5-1', 'Temp5-2', 'Temp5-3'] }
+      };
+
+      for (const [btnId, catId] of Object.entries(rpCategoryButtons)) {
+        const btn = document.getElementById(btnId);
+        if (!btn) continue;
+
+        btn.addEventListener('click', () => {
+          const isOn = btn.dataset.state === "on";
+          const clickSound = document.getElementById('click-sound');
+          clickSound.currentTime = 0;
+          clickSound.play();
+
+          const imgSet = rpCategoryButtonImages[btnId];
+          if (imgSet) {
+            pressButtonImage(btn, imgSet.pressed, imgSet.default, 150);
+          }
+
+          if (!mapVisible) return;
+
+          const cat = document.getElementById(catId);
+          const light = document.getElementById(`light-${catId}`);
+          const infoBox = document.getElementById('category-info-box');
+
+          document.querySelectorAll('#rp-controls .rp-overlay-category').forEach(div => div.style.display = 'none');
+
+          if (isOn) {
+            btn.dataset.state = "off";
+            if (light) light.src = "indicator-off.png";
+            document.getElementById('rp-dummy-fillers').style.display = 'block';
+            infoBox.innerHTML = rpDefaultInfoContent;
+            infoBox.style.display = 'block';
+            setInfoBoxAlignment("left");
+          } else {
+            document.querySelectorAll('#rp-controls .rp-category-toggle').forEach(otherBtn => {
+              otherBtn.dataset.state = "off";
+            });
+            document.querySelectorAll('#rp-controls .rp-category-light').forEach(lightEl => {
+              lightEl.src = "indicator-off.png";
+            });
+
+            btn.dataset.state = "on";
+            if (light) light.src = "indicator-on.png";
+
+            cat.style.display = 'block';
+            document.getElementById('rp-dummy-fillers').style.display = 'none';
+
+            const desc = rpCategoryDescriptions[catId];
+            if (desc) {
+              infoBox.innerHTML = `<strong>${desc.name}</strong>` + desc.layers.map(layer => `<span>${layer}</span>`).join('');
+              infoBox.style.display = 'block';
+              setInfoBoxAlignment("right");
+            }
+          }
+        });
+      }
 
 
       const btnMapOn = document.getElementById('btn-map-on');
@@ -1400,8 +1823,8 @@
       const mapContainer = document.getElementById('map-container');
 
       function toggleMap(turnOn) {
-        if (turnOn === mapVisible) return; // Already in desired state
-
+        if (turnOn === mapVisible) return;
+        mapVisible = turnOn;
         if (turnOn) {
           document.getElementById('coord-input').style.display = 'block';
           mapContainer.style.display = 'block';
@@ -1443,14 +1866,8 @@
           document.getElementById('tickle-counter').style.display = 'block';
           statusLight.src = 'light-on.png';
 
-          const infoBox = document.getElementById('category-info-box');
-          if (!activeCategory) {
-            infoBox.innerHTML = defaultInfoContent;
-            infoBox.classList.add('default-list-mode');
-            setInfoBoxAlignment("left");
-            infoBox.style.display = 'block';
-            infoBox.classList.add('default-list-mode');
-          }
+          updateRpModeVisuals();
+          refreshControlSet();
         } else {
           document.getElementById('coord-input').style.display = 'none';
           mapContainer.style.opacity = '0';
@@ -1488,17 +1905,16 @@
             }
           });
 
-          document.querySelectorAll('.overlay-category').forEach(div => div.style.display = 'none');
+          document.querySelectorAll('#standard-controls .overlay-category').forEach(div => div.style.display = 'none');
           document.getElementById('dummy-fillers').style.display = 'block';
 
           const infoBox = document.getElementById('category-info-box');
           infoBox.innerHTML = '';
           infoBox.style.display = 'none';
 
-          activeCategory = null;
+          updateRpModeVisuals();
+          refreshControlSet();
         }
-
-        mapVisible = turnOn;
       }
 
 
@@ -1619,7 +2035,7 @@
         if (curvedPoints.length > 1) {
           const prev = curvedPoints[curvedPoints.length - 2];
           const pixelDist = map.distance(prev, latlng);
-          const meters = pixelDist * 3.11084; // ✅ correct conversion factor
+          const meters = pixelDist * 3.11084;
           customDistance += meters;
 
           if (customDistance >= 1000) {
@@ -1753,7 +2169,8 @@
         }
       });
 
-
+      updateRpModeVisuals();
+      refreshControlSet();
     });
 
     let markerLayer = null;
@@ -1926,7 +2343,6 @@
     function toggleEasterEggGif() {
       const gif = document.getElementById('easteregg-gif');
 
-      // Prevent showing if screen is off
       if (!mapVisible) return;
 
       easterEggVisible = !easterEggVisible;
@@ -1961,6 +2377,15 @@
 " />
   <div id="discord-button" onclick="window.open('https://discord.gg/RenatusRP', '_blank')">
     <img src="discord-button.png" alt="Join our Discord">
+  </div>
+  <div id="rotate-warning">
+    <div class="rotate-warning-inner">
+      <div class="rotate-icon">↻</div>
+      <div class="rotate-text">
+        Please rotate your device<br>
+        for the best experience
+      </div>
+    </div>
   </div>
 </body>
 </html>
