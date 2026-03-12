@@ -283,7 +283,7 @@
       position: absolute;
       top: 74%;
       left: 1%;
-      height: 23dvh;
+      height: 25dvh;
       width: auto;
       pointer-events: none;
       z-index: 150;
@@ -821,11 +821,11 @@
     `;
     const rpDefaultInfoContent = `
       <strong>CATEGORIES</strong>
-      <span>1-Temp1</span>
-      <span>2-Temp2</span>
-      <span>3-Temp3</span>
-      <span>4-Temp4</span>
-      <span>5-Temp5</span>
+      <span>1-Error1</span>
+      <span>2-Error2</span>
+      <span>3-Error3</span>
+      <span>4-Error4</span>
+      <span>5-Error5</span>
     `;
     const mapLabels = [];
     const pressedLock = new Map();
@@ -1740,11 +1740,11 @@
       };
 
       const rpCategoryDescriptions = {
-        'rp-cat-a': { name: 'TEMP1', layers: ['Temp1-1', 'Temp1-2', 'Temp1-3'] },
-        'rp-cat-b': { name: 'TEMP2', layers: ['Temp2-1', 'Temp2-2', 'Temp2-3'] },
-        'rp-cat-c': { name: 'TEMP3', layers: ['Temp3-1', 'Temp3-2', 'Temp3-3'] },
-        'rp-cat-d': { name: 'TEMP4', layers: ['Temp4-1', 'Temp4-2', 'Temp4-3'] },
-        'rp-cat-e': { name: 'TEMP5', layers: ['Temp5-1', 'Temp5-2', 'Temp5-3'] }
+        'rp-cat-a': { name: 'ERROR1', layers: ['Error1-1', 'Error1-2', 'Error1-3'] },
+        'rp-cat-b': { name: 'ERROR2', layers: ['Error2-1', 'Error2-2', 'Error2-3'] },
+        'rp-cat-c': { name: 'ERROR3', layers: ['Error3-1', 'Error3-2', 'Error3-3'] },
+        'rp-cat-d': { name: 'ERROR4', layers: ['Error4-1', 'Error4-2', 'Error4-3'] },
+        'rp-cat-e': { name: 'ERROR5', layers: ['Error5-1', 'Error5-2', 'Error5-3'] }
       };
 
       for (const [btnId, catId] of Object.entries(rpCategoryButtons)) {
