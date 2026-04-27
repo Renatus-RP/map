@@ -830,6 +830,31 @@
     const mapLabels = [];
     const pressedLock = new Map();
 
+    const STORAGE_KEYS = {
+      coords: "renatus_coord_path",
+      layers: "renatus_layer_states",
+      modes: "renatus_mode_states",
+      rpMode: "renatus_rp_mode"
+    };
+
+    function loadSaved(key, fallback) {
+      try {
+        return JSON.parse(localStorage.getItem(key)) ?? fallback;
+      } catch {
+        return fallback;
+      }
+    }
+
+    function saveData(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    let savedLayerStates = loadSaved(STORAGE_KEYS.layers, {});
+    let savedModeStates = loadSaved(STORAGE_KEYS.modes, {});
+
+
+
+
     const padTop = 300;
     const padRight = 250;
 
@@ -1280,11 +1305,15 @@
           layer.addTo(map);
           button.src = "layerbutton-on.png";
           button.dataset.state = "on";
+          savedLayerStates[buttonId] = true;
         } else {
           map.removeLayer(layer);
           button.src = "layerbutton-off.png";
           button.dataset.state = "off";
+          savedLayerStates[buttonId] = false;
         }
+
+        saveData(STORAGE_KEYS.layers, savedLayerStates);
       });
     }
     function catmullRomSpline(points, segments = 16) {
@@ -1511,6 +1540,8 @@
           gridLayerGroup.addTo(map);
           btnGrid.src = "modebutton-on.png";
           btnGrid.dataset.state = "on";
+          savedModeStates.grid = true;
+          saveData(STORAGE_KEYS.modes, savedModeStates);
           floatLabelContainer.style.display = 'block';
           map.on('move zoom', updateFloatingLabels);
           updateFloatingLabels();
@@ -1519,6 +1550,8 @@
           map.removeLayer(gridLayerGroup);
           btnGrid.src = "modebutton-off.png";
           btnGrid.dataset.state = "off";
+          savedModeStates.grid = false;
+          saveData(STORAGE_KEYS.modes, savedModeStates);
           floatLabelContainer.style.display = 'none';
           map.off('move zoom', updateFloatingLabels);
           if (mapVisible && lightGrid) lightGrid.src = "indicator-off.png";
@@ -1538,12 +1571,16 @@
           enableTopoPulse();
           btnTopoMode.src = "modebutton-on.png";
           btnTopoMode.dataset.state = "on";
+          savedModeStates.topography = true;
+          saveData(STORAGE_KEYS.modes, savedModeStates);
           if (mapVisible && lightGrid) lightGrid.src = "indicator-on.png";
         } else {
           disableTopoPulse();
           map.removeLayer(topographyLayer);
           btnTopoMode.src = "modebutton-off.png";
           btnTopoMode.dataset.state = "off";
+          savedModeStates.topography = false;
+          saveData(STORAGE_KEYS.modes, savedModeStates);
           if (mapVisible && lightGrid) lightGrid.src = "indicator-off.png";
         }
       });
@@ -1583,11 +1620,15 @@
           base1Layer.addTo(map);
           btnBase1.src = "modebutton-on.png";
           btnBase1.dataset.state = "on";
+          savedModeStates.base1 = true;
+          saveData(STORAGE_KEYS.modes, savedModeStates);
           if (mapVisible && lightGrid) lightGrid.src = "indicator-on.png";
         } else {
           map.removeLayer(base1Layer);
           btnBase1.src = "modebutton-off.png";
           btnBase1.dataset.state = "off";
+          savedModeStates.base1 = false;
+          saveData(STORAGE_KEYS.modes, savedModeStates);
           if (mapVisible && lightGrid) lightGrid.src = "indicator-off.png";
         }
       });
@@ -1615,6 +1656,8 @@
 
           btnContrastMode.src = "modebutton-on.png";
           btnContrastMode.dataset.state = "on";
+          savedModeStates.contrast = true;
+          saveData(STORAGE_KEYS.modes, savedModeStates);
           if (mapVisible && lightGrid) lightGrid.src = "indicator-on.png";
 
         } else {
@@ -1628,6 +1671,8 @@
 
           btnContrastMode.src = "modebutton-off.png";
           btnContrastMode.dataset.state = "off";
+          savedModeStates.contrast = false;
+          saveData(STORAGE_KEYS.modes, savedModeStates);
           if (mapVisible && lightGrid) lightGrid.src = "indicator-off.png";
         }
       });
@@ -1895,17 +1940,6 @@
             light.src = "indicator-off.png";
           });
 
-          document.querySelectorAll('.layer-toggle').forEach(btn => {
-            btn.src = "layerbutton-off.png";
-            btn.dataset.state = "off";
-          });
-
-          Object.values(toggleableLayers).forEach(layer => {
-            if (map.hasLayer(layer)) {
-              map.removeLayer(layer);
-            }
-          });
-
           document.querySelectorAll('#standard-controls .overlay-category').forEach(div => div.style.display = 'none');
           document.getElementById('dummy-fillers').style.display = 'block';
 
@@ -1988,6 +2022,7 @@
         coordLayerGroup.clearLayers();
         coordPathLayer = null;
         markerLayer = null;
+        localStorage.removeItem(STORAGE_KEYS.coords);
       }
 
       function stopCustomMeasuring() {
@@ -2170,6 +2205,51 @@
         }
       });
 
+      for (const [buttonId, enabled] of Object.entries(savedLayerStates)) {
+        const button = document.getElementById(buttonId);
+        const layer = toggleableLayers[buttonId];
+
+        if (!button || !layer) continue;
+
+        if (enabled) {
+          layer.addTo(map);
+          button.src = "layerbutton-on.png";
+          button.dataset.state = "on";
+        } else {
+          button.src = "layerbutton-off.png";
+          button.dataset.state = "off";
+        }
+      }
+
+      if (savedModeStates.grid) {
+        gridLayerGroup.addTo(map);
+        btnGrid.src = "modebutton-on.png";
+        btnGrid.dataset.state = "on";
+        floatLabelContainer.style.display = 'block';
+        map.on('move zoom', updateFloatingLabels);
+        updateFloatingLabels();
+      }
+
+      if (savedModeStates.topography) {
+        topographyLayer.addTo(map);
+        enableTopoPulse();
+        btnTopoMode.src = "modebutton-on.png";
+        btnTopoMode.dataset.state = "on";
+      }
+
+      if (savedModeStates.base1) {
+        base1Layer.addTo(map);
+        btnBase1.src = "modebutton-on.png";
+        btnBase1.dataset.state = "on";
+      }
+
+      if (savedModeStates.contrast) {
+        mapContainer.classList.add('grayscale');
+        btnContrastMode.src = "modebutton-on.png";
+        btnContrastMode.dataset.state = "on";
+      }
+
+      redrawCoordPathFromSaved();
       updateRpModeVisuals();
       refreshControlSet();
     });
@@ -2254,7 +2334,10 @@
       }
 
       coordPathPoints.push(latlng);
-
+      saveData(
+        STORAGE_KEYS.coords,
+        coordPathPoints.map(p => ({ lat: p.lat, lng: p.lng }))
+      );
       if (coordPathPoints.length >= 2) {
         if (coordPathLayer) {
           coordLayerGroup.removeLayer(coordPathLayer);
@@ -2290,7 +2373,58 @@
       map.setView(latlng, map.getZoom());
     }
 
+    function redrawCoordPathFromSaved() {
+      coordLayerGroup.clearLayers();
+      coordPathLayer = null;
+      markerLayer = null;
 
+      const savedCoords = loadSaved(STORAGE_KEYS.coords, []);
+      coordPathPoints = savedCoords.map(p => L.latLng(p.lat, p.lng));
+
+      if (coordPathPoints.length === 0) return;
+
+      coordPathPoints.forEach((point, index) => {
+        const isLatest = index === coordPathPoints.length - 1;
+        const isFirst = index === 0;
+
+        if (!isLatest) {
+          coordLayerGroup.addLayer(L.circleMarker(point, {
+            radius: isFirst ? 4 : 2.5,
+            color: '#c0ffc0',
+            fillColor: '#c0ffc0',
+            fillOpacity: isFirst ? 1 : 0.2,
+            weight: 1,
+            pane: 'measure'
+          }));
+        }
+      });
+
+      if (coordPathPoints.length >= 2) {
+        coordPathLayer = L.polyline(coordPathPoints, {
+          color: '#c0ffc0',
+          weight: 2.5,
+          opacity: 0.9,
+          dashArray: '6,4',
+          interactive: false,
+          pane: 'measure'
+        });
+
+        coordLayerGroup.addLayer(coordPathLayer);
+      }
+
+      const latest = coordPathPoints[coordPathPoints.length - 1];
+
+      markerLayer = L.marker(latest, {
+        icon: L.divIcon({
+          className: 'pulse-marker',
+          iconSize: [20, 20],
+          iconAnchor: [10, 10]
+        }),
+        pane: 'measure'
+      });
+
+      coordLayerGroup.addLayer(markerLayer);
+    }
 
     document.getElementById('coord-full').addEventListener('keydown', function (e) {
       if (e.key === 'Enter') {
